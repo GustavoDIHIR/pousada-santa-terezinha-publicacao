@@ -30,8 +30,10 @@ input[aria-invalid=true]{border-color:var(--state-error-text)!important}
 input:disabled,select:disabled,textarea:disabled{background:var(--surface-page);cursor:not-allowed}
 #account-content form label,.catalog-controls label,#admin-content label{color:var(--text-label);font-weight:var(--fw-medium)}
 #account-content form input{min-height:var(--control-height)}
-.search-submit,#account-submit,#continue,#confirm-form button,.admin-editor-footer button[type=submit],#admin-save-receipt,.property-page-form>button[type=submit]{background:var(--color-blue-600);border-color:var(--color-blue-600);color:var(--text-on-brand);box-shadow:var(--shadow-primary)}
-.search-submit:hover,#account-submit:hover,#continue:hover,#confirm-form button:hover,.admin-editor-footer button[type=submit]:hover,#admin-save-receipt:hover,.property-page-form>button[type=submit]:hover{background:var(--color-blue-700);color:var(--text-on-brand)}
+.search-submit,#account-submit,#continue,#confirm-form button,#apply-dates,#guests-form>button,#account-profile-form button[type=submit],#account-code-lookup button[type=submit],#admin-add-room,#admin-review-confirm,.create-administrator-form>button,.admin-editor-footer button[type=submit],#admin-save-receipt,.property-page-form>button[type=submit]{background:var(--color-blue-600);border-color:var(--color-blue-600);color:var(--text-on-brand);box-shadow:var(--shadow-primary)}
+.search-submit:hover,#account-submit:hover,#continue:hover,#confirm-form button:hover,#apply-dates:hover,#guests-form>button:hover,#account-profile-form button[type=submit]:hover,#account-code-lookup button[type=submit]:hover,#admin-add-room:hover,#admin-review-confirm:hover,.create-administrator-form>button:hover,.admin-editor-footer button[type=submit]:hover,#admin-save-receipt:hover,.property-page-form>button[type=submit]:hover{background:var(--color-blue-700);border-color:var(--color-blue-700);color:var(--text-on-brand)}
+.catalog-room-actions .button{background:var(--color-navy-700);border-color:var(--color-navy-700);color:var(--text-on-brand)}
+.catalog-room-actions .button:hover{background:var(--color-blue-700);border-color:var(--color-blue-700);color:var(--text-on-brand)}
 #continue:disabled{background:var(--surface-page);border-color:var(--border-control);color:var(--text-muted);box-shadow:none}
 .site-header .account-menu{background:var(--color-navy-700);color:var(--text-on-brand);font-weight:var(--fw-semibold)}
 .site-header .account-menu:hover{background:var(--color-navy-800)}
@@ -90,4 +92,15 @@ body[data-access=locked] #account-status{display:none}
 .site-footer [data-cookie-settings]{align-self:flex-start;min-height:var(--target-min);padding:var(--space-2) var(--space-3);border:0;color:var(--text-on-brand-muted);background:transparent}
 #admin-content .property-form label{align-content:start}
 
-.account-link,#account-switch{border:0;box-shadow:none;background:transparent}
+.account-link,#account-switch,.text-button,#clear-dates{border:0;box-shadow:none;background:transparent}
+.text-button:hover,#clear-dates:hover{background:transparent;color:var(--color-navy-700)}
+.account-client-nav button,#admin-content .admin-editor-tabs button,.property-editor-tabs button,#room-filters button{border:0;border-bottom:2px solid transparent;background:transparent;box-shadow:none}
+.account-client-nav button:hover,.account-client-nav button[aria-current],#admin-content .admin-editor-tabs button:hover,#admin-content .admin-editor-tabs button[aria-current],.property-editor-tabs button:hover,.property-editor-tabs button[aria-current],#room-filters button:hover{background:transparent;border-bottom-color:var(--color-blue-600);color:var(--color-blue-700)}
+#room-filters button[aria-pressed=true]{background:transparent;border-bottom-color:var(--color-navy-700);color:var(--color-navy-700)}
+button.search-field{border:0;box-shadow:none}
+.search-field+.search-field{border-left:1px solid var(--border-subtle)}
+@media(max-width:640px){.search-field+.search-field{border-left:0;border-top:1px solid var(--border-subtle)}}
+.calendar-selection button{border:0;border-bottom:3px solid transparent;box-shadow:none}
+.calendar-selection button+button{border-left:1px solid var(--border-subtle)}
+.calendar-selection button[aria-pressed=true]{border-bottom-color:var(--color-blue-600)}
+.gallery button,.hero-photos button,.restaurant-gallery button,.editable-photo-grid button{border:0;box-shadow:none}
