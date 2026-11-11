@@ -1,4 +1,4 @@
-import './demo.js?v=78e49104';
+import './demo.js?v=71f7683e';
 const labels = {name:'Nome de apresentação',legalName:'Razão social',taxId:'CNPJ / identificação',address:'Endereço',city:'Cidade e estado',phone:'Telefone',whatsapp:'WhatsApp com DDD',email:'E-mail de contato',instagram:'Instagram (link HTTPS)',facebook:'Facebook (link HTTPS)',paymentMethods:'Formas de pagamento',paymentInstructions:'Orientações sobre pagamento',checkInTime:'Horário de check-in (HH:MM)',checkOutTime:'Horário de check-out (HH:MM)'};
 let currentProperty;
 async function post(path,data={}) {

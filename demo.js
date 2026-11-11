@@ -1,6 +1,6 @@
-import {paymentOptions,reservationEmail} from './reservation-utils.js?v=78e49104';
+import {paymentOptions,reservationEmail} from './reservation-utils.js?v=71f7683e';
 // Exclusivo do protótipo estático: simulação local, sem autenticação ou agenda reais.
-import { seedRooms, seedProperty } from './demo-seed.js?v=78e49104';
+import { seedRooms, seedProperty } from './demo-seed.js?v=71f7683e';
 const storageKey = 'pousada-prototipo-v1:' + location.pathname;
 const originalFetch = window.fetch.bind(window);
 const day = 86400000;
@@ -93,7 +93,7 @@ async function receiptAction(input,editing){
  if(editing)requireAdmin();const booking=bookingFor(input.code);
  const paymentLabels={'':'Não registrado',pix:'Pix',credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Transferência bancária'};
  const saved=state.receipts[booking.code]||{paymentMethod:booking.paymentMethod||'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
- const receipt=await import('./receipt.js?v=78e49104');
+ const receipt=await import('./receipt.js?v=71f7683e');
  if(editing&&(input.save||input.preview)){
   if(!Object.hasOwn(paymentLabels,method)||!Array.isArray(input.documents)||input.documents.length>3)fail('Revise pagamento e anexos.');
   files=[];

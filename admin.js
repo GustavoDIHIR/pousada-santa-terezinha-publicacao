@@ -1,6 +1,6 @@
-import './demo.js?v=78e49104';
-import {paymentLabel} from './reservation-utils.js?v=78e49104';
-import { logoutAccount, refreshAccount } from './account.js?v=78e49104';
+import './demo.js?v=71f7683e';
+import {paymentLabel} from './reservation-utils.js?v=71f7683e';
+import { logoutAccount, refreshAccount } from './account.js?v=71f7683e';
 
 const admin = document.querySelector('#admin-content');
 
@@ -366,7 +366,7 @@ if (admin) {
     try{
       const response=await fetch('/api/reservation/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});const result=await response.json();if(!response.ok)throw new Error(result.error);
       if(version!==reviewRevision||!administrator||!reviewDialog.open)return;
-      const {reservation,customer,notifications,emailMode}=result;const offer=reservation.offer;const body=find('#admin-review-content');
+      const {reservation,customer,notifications,emailMode,whatsappConfigured,whatsappMode,whatsappMessages}=result;const offer=reservation.offer;const body=find('#admin-review-content');
       const facts=element('dl',undefined,'lines');
       for(const[label,value]of [['Código',code],['Cliente',customer?.fullName||'Cadastro indisponível'],['E-mail',customer?.email||'Não informado'],['Telefone',customer?.phone||'Não informado'],['Quarto',offer.name],['Período',dates.format(new Date(offer.arrival))+' a '+dates.format(new Date(offer.departure))],['Hóspedes',String(offer.adults+offer.children)],['Plano',offer.planName||'Hospedagem'],['Total',price(offer.total)],['Pagamento escolhido',paymentLabel(reservation.paymentMethod)],['Pagamento','A escolha não comprova quitação']])facts.append(element('dt',label),element('dd',value));body.append(facts);
       const contacts=element('div',undefined,'admin-row-actions');
@@ -375,7 +375,8 @@ if (admin) {
       body.append(element('h3','Comunicação da reserva'),element('p',emailMode==='gmail'?'Envio pelo Gmail configurado. Confira o status de cada mensagem.':'Prévia de teste. Os e-mails abaixo não foram enviados.'));
       const labels={preview:'Prévia — não enviado',queued:'Na fila de envio',sending:'Envio em andamento',sent:'Enviado pelo provedor',failed:'Falha no envio',uncertain:'Envio não confirmado — conferir caixa de saída'};
       for(const message of notifications||[]){const details=element('details');details.append(element('summary',(message.kind==='confirmed'?'Aprovação':'Recebimento da solicitação')+' · '+(labels[message.status]||message.status)),element('p','Destinatário: '+message.recipient),element('h4',message.subject),element('pre',message.body,'email-preview'));if(message.error)details.append(element('p',message.error,'status'));body.append(details);}
-      body.append(element('p','WhatsApp automático ainda não conectado à API. O telefone acima permite contato com o cliente.','muted'));
+      body.append(element('p',whatsappMode==='meta'?'WhatsApp Cloud API configurado.':whatsappConfigured?'Webhook do WhatsApp configurado em modo de validação (sem disparo externo).':'WhatsApp automático ainda não conectado à API. O telefone acima permite contato com o cliente.','muted'));
+      for(const item of whatsappMessages||[]){const details=element('details');details.append(element('summary','WhatsApp ('+item.recipient+') · '+(labels[item.status]||item.status)),element('pre',item.body,'email-preview'));if(item.error)details.append(element('p',item.error,'status'));body.append(details);}
       find('#admin-review-confirm').hidden=reservation.cancelled||reservation.approval!=='pending'||offer.departure<=new Date().toLocaleDateString('sv-SE',{timeZone:'America/Sao_Paulo'});find('#admin-review-status').textContent='Confira os dados antes de aprovar a hospedagem.';
     }catch(error){if(version===reviewRevision)find('#admin-review-status').textContent=error.message;}
   }
