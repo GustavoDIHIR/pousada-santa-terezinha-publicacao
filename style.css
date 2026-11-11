@@ -195,7 +195,7 @@ dialog p{color:var(--muted);margin:.4rem 0 .8rem}
 .days button:disabled{color:#a9b2c0;background:#f9fafb;cursor:default}
 .days button[aria-pressed=true]{color:white;background:var(--blue);border-color:var(--blue)}
 .days button[aria-current=date]::after{content:"";position:absolute;bottom:4px;left:calc(50% - 2px);width:4px;height:4px;background:currentColor}
-.weekday{padding-bottom:.35rem;font-weight:750;font-size:.67rem;color:var(--muted)}
+.weekday{padding-bottom:.35rem;font-weight:750;font-size:var(--fs-2xs);color:var(--muted)}
 .calendar-legend{display:flex;flex-wrap:wrap;gap:.5rem 1.15rem;margin-top:1rem;color:var(--muted);font-size:.7rem}
 .calendar-legend span{display:inline-flex;align-items:center;gap:.4rem}
 .calendar-legend i{display:block;width:10px;height:10px}
@@ -228,13 +228,13 @@ dialog p{color:var(--muted);margin:.4rem 0 .8rem}
   .wrap{width:calc(100% - 2rem)}
   .brand{font-size:.9rem}
   .brand img{width:44px;height:32px}
-  .brand small{font-size:.65rem}
+  .brand small{font-size:var(--fs-2xs)}
   .hero-content{grid-template-columns:1fr}
   .search-strip{grid-template-columns:1fr 1fr;padding:.6rem}
   .search-field{gap:.36rem;padding:.2rem}
   .search-field .icon{width:16px;height:16px;padding:.33rem}
   .search-field strong{font-size:.78rem}
-  .search-field small{font-size:.68rem}
+  .search-field small{font-size:var(--fs-2xs)}
   .search-submit{grid-column:1/-1;min-height:43px}
   .discover,.property-facts,.booking-layout,.checkout-layout,.information{grid-template-columns:1fr}
   .section-head,.property-heading{align-items:start;flex-wrap:wrap}
@@ -457,7 +457,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
 #photo{width:min(1120px,calc(100% - 2rem));max-height:94dvh;padding:0;overflow:auto;overscroll-behavior:contain;background:#0b182c;color:white;border:1px solid #344157;box-shadow:0 24px 90px #0008}
 #photo::backdrop{background:#030a16e8}
 #photo .photo-toolbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.1rem 1.5rem;border-bottom:1px solid #344157}
-#photo .photo-eyebrow{display:block;color:#aebfd4;font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+#photo .photo-eyebrow{display:block;color:#aebfd4;font-size:var(--fs-2xs);font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
 #photo h2{padding:0;color:white;font-size:1.3rem;letter-spacing:-.025em}
 #photo .dialog-close{position:static;margin:0;flex:none}
 #photo .dialog-close button{display:inline-flex;gap:.6rem;width:auto;min-height:44px;padding:.5rem .7rem;background:transparent;color:white;border:1px solid #56657a;font-size:.8rem}
@@ -487,7 +487,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
   #photo{width:calc(100% - 1rem);max-height:95dvh}
   #photo .photo-toolbar{padding:.9rem 1rem;gap:.6rem}
   #photo h2{font-size:1.05rem}
-  #photo .photo-eyebrow{font-size:.58rem}
+  #photo .photo-eyebrow{font-size:var(--fs-2xs)}
   #photo .dialog-close button{width:44px;padding:0}
   #photo .dialog-close button span{display:none}
   #photo .photo-stage{padding:.75rem 0}
@@ -518,7 +518,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
 .hero-copy>p:not(.eyebrow){font-size:1rem;line-height:1.75;max-width:38ch;margin-top:1.35rem}
 .hero-copy>a{margin-top:1.4rem;padding-bottom:.45rem;border-bottom:1px solid #8da9c6;text-decoration:none;font-size:.85rem}
 .hero-photos{gap:5px;aspect-ratio:1.55}
-.hero-figure figcaption{font-size:.68rem;line-height:1.5;margin-top:.65rem}
+.hero-figure figcaption{font-size:var(--fs-2xs);line-height:1.5;margin-top:.65rem}
 .home-search{margin-top:1.6rem}
 .search-strip{padding:.6rem;gap:.3rem;border-color:#bdccdc;box-shadow:0 5px 18px #14254208}
 .search-field{min-height:62px;padding:.6rem .75rem}
@@ -574,7 +574,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
 .product-highlights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem}
 .product-highlights>article{min-width:0;padding-right:1.2rem;border-right:1px solid var(--line)}
 .product-highlights>article:last-child{border:0;padding-right:0}
-.product-highlights small{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.35rem}
+.product-highlights small{display:block;font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:.09em;margin-bottom:.35rem}
 .product-highlights strong{display:block;font-size:.88rem;line-height:1.5}
 .product-gallery{height:clamp(290px,36vw,500px);gap:6px}
 .product-facts{padding-block:2.3rem;gap:3rem;grid-template-columns:minmax(0,1.65fr) minmax(275px,1fr)}
@@ -592,13 +592,13 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
 .detail-booking{margin-top:1rem;padding:2.2rem;background:#f0f5fa;border-top:3px solid var(--navy);scroll-margin-top:1.5rem}
 .booking-section-heading{display:flex;align-items:flex-start;gap:1.2rem}
 .section-index{display:grid;place-items:center;width:48px;height:48px;flex:none;border:1px solid #9aafc5;color:var(--navy);font-size:.9rem;font-weight:800;letter-spacing:.04em}
-.booking-section-heading .eyebrow{margin-bottom:.55rem;font-size:.65rem}
+.booking-section-heading .eyebrow{margin-bottom:.55rem;font-size:var(--fs-2xs)}
 .booking-intro{max-width:78ch;font-size:.88rem;line-height:1.7;color:var(--muted);margin:1rem 0 1.5rem}
 .detail-booking #detail-search{margin:1.6rem 0 2rem}
 .detail-booking .search-strip{grid-template-columns:minmax(130px,.8fr) minmax(210px,1.3fr) minmax(170px,1fr) auto}
 .detail-booking .search-submit{padding-inline:1rem;font-size:.78rem}
 .booking-layout{grid-template-columns:minmax(0,1.5fr) minmax(285px,1fr);gap:1.6rem}
-.booking-step-label{display:block;margin:0 0 .75rem!important;font-size:.68rem;color:var(--muted)}
+.booking-step-label{display:block;margin:0 0 .75rem!important;font-size:var(--fs-2xs);color:var(--muted)}
 .booking-empty{min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:.65rem;border-block:1px solid #c6d3e0;padding:1.5rem 0;color:var(--muted)}
 .booking-empty h3{font-size:1.08rem;color:var(--navy)}
 .booking-empty p{font-size:.85rem;max-width:45ch;line-height:1.75}
@@ -647,14 +647,14 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
  .header-row{padding-block:.75rem}
  .brand{font-size:.9rem}
  .brand img{width:44px;height:32px}
- .brand small{font-size:.65rem}
+ .brand small{font-size:var(--fs-2xs)}
  .site-header nav a{padding:.8rem .4rem}
  .hero-content{grid-template-columns:minmax(0,1fr);padding-block:2rem;gap:1.8rem}
- .hero-copy .eyebrow{margin-bottom:.85rem;font-size:.65rem}
+ .hero-copy .eyebrow{margin-bottom:.85rem;font-size:var(--fs-2xs)}
  .hero h1{font-size:clamp(2rem,8.7vw,3rem);max-width:16ch}
  .hero-copy>p:not(.eyebrow){font-size:.91rem;margin-top:1rem;line-height:1.7}
  .hero-photos{aspect-ratio:1.45}
- .hero-figure figcaption{font-size:.65rem}
+ .hero-figure figcaption{font-size:var(--fs-2xs)}
  .home-search{margin-top:1rem}
  .search-strip,.detail-booking .search-strip{grid-template-columns:minmax(0,1fr);padding:.45rem;gap:0}
  .search-field{min-height:60px;padding:.8rem .65rem}
@@ -692,7 +692,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
  .product-highlights>article{padding-right:.65rem}
  .product-highlights>article:nth-child(2){border:0;padding-right:0}
  .product-highlights>article:last-child{grid-column:1/-1;border-top:1px solid var(--line);padding-top:.65rem}
- .product-highlights small{font-size:.63rem}
+ .product-highlights small{font-size:var(--fs-2xs)}
  .product-highlights strong{font-size:.8rem}
  .product-gallery{height:280px}
  .product-facts{grid-template-columns:minmax(0,1fr);padding-block:1.7rem;gap:1.6rem}
@@ -701,7 +701,7 @@ body[data-access="locked"] [data-page]:not(#conta):not(#privacidade){display:non
  .detail-booking{padding:1.3rem 1rem;margin-inline:-.25rem}
  .booking-section-heading{gap:.75rem}
  .section-index{width:38px;height:38px;font-size:.8rem}
- .booking-section-heading .eyebrow{font-size:.6rem;letter-spacing:.1em}
+ .booking-section-heading .eyebrow{font-size:var(--fs-2xs);letter-spacing:.1em}
  .booking-intro{font-size:.8rem}
  .detail-booking #detail-search{margin:1.3rem 0 1.5rem}
  .booking-layout{gap:1.2rem}

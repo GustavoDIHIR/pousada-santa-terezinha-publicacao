@@ -15,19 +15,31 @@ let reservationTotal = 0;
 if (content) content.innerHTML = `
   <p id="account-status" class="status" role="status"></p>
   <div id="account-guest" class="account-access">
-    <section class="surface" aria-labelledby="account-form-title">
-      <h2 id="account-form-title">Entrar na conta</h2>
+    <aside class="access-story" aria-label="Sobre a pousada">
+      <p class="eyebrow" data-property-name>Pousada Santa Terezinha do Menino Jesus</p>
+      <p class="access-headline">Sua estadia em frente à <em>Canção Nova</em></p>
+      <p class="access-description">Hospedagem familiar, a poucos passos do portão principal.</p>
+      <figure><img src="./pousada-fachada-azul.webp" width="680" height="510" alt="Fachada azul da Pousada Santa Terezinha"><figcaption>Fachada da Pousada Santa Terezinha</figcaption></figure>
+      <div class="access-values"><span>Quartos privativos</span><span>Vagas compartilhadas</span><span>Minha conta</span></div>
+    </aside>
+    <section class="access-form-side" aria-labelledby="account-form-title">
+     <div class="access-form-wrap">
+      <div class="access-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></div>
+      <h1 id="account-form-title">Entrar na conta</h1>
       <p id="account-form-intro">Entre com seu e-mail e senha para acessar sua conta.</p>
       <form id="account-login" method="post">
         <label>E-mail<input name="email" type="email" autocomplete="username" maxlength="254" required></label>
         <label data-registration hidden>Nome completo<input name="fullName" autocomplete="name" maxlength="120" disabled></label>
         <label data-registration hidden>Telefone para contato<input name="phone" type="tel" autocomplete="tel" maxlength="32" disabled></label>
-        <label>Senha<input name="password" type="password" autocomplete="current-password" maxlength="128" required></label>
+        <label>Senha<span class="access-password"><input name="password" type="password" autocomplete="current-password" maxlength="128" required><button type="button" id="account-show-password" aria-label="Mostrar senha" aria-pressed="false"><svg class="icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path data-password-slash d="m3 3 18 18" hidden/></svg></button></span></label>
         <p id="account-password-help" class="muted" hidden>Use pelo menos 12 caracteres. Na demonstração, use um e-mail de teste e uma senha exclusiva.</p>
+        <p id="account-login-error" class="access-error" role="alert" hidden></p>
         <button id="account-submit">Entrar</button>
       </form>
       <button id="account-switch" type="button" class="account-link">Criar conta</button>
-      <p><a href="#privacidade">Como usamos seus dados</a></p>
+      <p class="access-privacy"><a href="#privacidade">Como usamos seus dados</a></p>
+      <p class="access-security">Acompanhe suas reservas e comprovantes em Minha conta.</p>
+     </div>
     </section>
   </div>
   <section id="account-client" hidden aria-labelledby="account-client-title">
@@ -152,6 +164,9 @@ export async function downloadReceipt(code) {
 
 function writeStatus(selector, text) {
   find(selector).textContent = text;
+  if(selector==='#account-status'){
+    const error=find('#account-login-error');error.textContent=user?'':text;error.hidden=!error.textContent;
+  }
 }
 
 function make(tag, text, className) {
@@ -323,6 +338,10 @@ async function act(button, action, statusSelector = '#account-status') {
 
 if (content) {
   const login = find('#account-login');
+  const passwordToggle=find('#account-show-password');
+  function concealPassword(){login.elements.password.type='password';passwordToggle.setAttribute('aria-label','Mostrar senha');passwordToggle.setAttribute('aria-pressed','false');passwordToggle.querySelector('[data-password-slash]').setAttribute('hidden','');}
+  passwordToggle.onclick=()=>{const visible=login.elements.password.type==='password';login.elements.password.type=visible?'text':'password';passwordToggle.setAttribute('aria-label',visible?'Ocultar senha':'Mostrar senha');passwordToggle.setAttribute('aria-pressed',String(visible));passwordToggle.querySelector('[data-password-slash]').toggleAttribute('hidden',!visible);};
+  login.addEventListener('input',()=>login.elements.password.removeAttribute('aria-invalid'));
   const deleteForm = find('#account-delete-form');
   const profile = find('#account-profile-form');
   find('#admin-edit-own-profile').onclick = () => { find('#conta-dados').hidden = !find('#conta-dados').hidden; };
@@ -342,6 +361,7 @@ if (content) {
     if (creating) password.setAttribute('aria-describedby', 'account-password-help');
     else password.removeAttribute('aria-describedby');
     password.value = '';
+    password.removeAttribute('aria-invalid');concealPassword();
     for (const label of login.querySelectorAll('[data-registration]')) {
       const input = label.querySelector('input');
       label.hidden = !creating;
@@ -371,12 +391,13 @@ if (content) {
         credentials.fullName = login.elements.fullName.value;
         credentials.phone = login.elements.phone.value;
       }
+      concealPassword();writeStatus('#account-submit',creating?'Criando conta…':'Verificando acesso…');
       try {
         const response = await request(creating ? 'register' : 'login', credentials);
         login.reset();
         setCreating(false);
         setUser(response.user, '', true, true);
-      } finally { login.elements.password.value = ''; }
+      } catch(error){if(error.status===401&&!creating){login.elements.password.setAttribute('aria-invalid','true');login.elements.password.focus();}throw error;} finally { login.elements.password.value = '';concealPassword();writeStatus('#account-submit',creating?'Criar conta':'Entrar'); }
     });
   };
 

@@ -1,0 +1,93 @@
+/* Adaptação do Fluxo de Caixa PR v1.1 à pousada.
+   Os tokens e as fontes do pacote permanecem intactos em design-system/.
+   Linhas retas e controles compactos de demonstração seguem as escolhas do projeto. */
+:root{
+ --navy:var(--color-navy-700);--ink:var(--text-base);--muted:var(--text-muted);
+ --blue:var(--color-blue-600);--blue-hover:var(--color-blue-700);
+ --soft:var(--surface-tint);--paper:var(--surface-card);--line:var(--border-subtle);--white:var(--text-on-brand);
+ --pousada-radius:0;--pousada-rule:1px;--pousada-login-height:640px;
+ font-family:var(--font-sans);font-size:16px;line-height:var(--lh-body);font-synthesis:none;
+}
+body{font-family:var(--font-sans);font-size:var(--fs-sm);color:var(--text-base);background:var(--surface-card)}
+h1,h2,h3,h4{color:var(--text-strong);font-weight:var(--fw-semibold);line-height:var(--lh-tight)}
+h1,h2{letter-spacing:var(--ls-title)}
+a{color:var(--text-link)}
+button,input,select,textarea{font-family:var(--font-sans)}
+button,.button{border-radius:var(--pousada-radius);font-weight:var(--fw-semibold);min-height:var(--target-min);background:var(--surface-card);color:var(--text-label);border:var(--pousada-rule) solid var(--border-control);transition:background var(--motion-fast) var(--motion-ease)}
+button:hover,.button:hover{background:var(--surface-page);color:var(--text-strong)}
+button:disabled{background:var(--surface-page);color:var(--text-muted);opacity:.6;cursor:not-allowed}
+:focus-visible{outline:var(--focus-ring-keyboard);outline-offset:var(--space-1)}
+::selection{background:var(--color-sky-200);color:var(--color-navy-800)}
+.icon{stroke-width:2}
+input:not([type=radio]):not([type=checkbox]),select,textarea,
+#account-content form input,#admin-content input:not([type=checkbox]):not([type=radio]),#admin-content select,#admin-content textarea,.catalog-controls input{
+ color:var(--text-base);background:var(--surface-card);border-color:var(--border-control);border-radius:var(--pousada-radius);transition:border-color var(--motion-fast) var(--motion-ease);font-weight:var(--fw-regular);
+}
+input::placeholder,textarea::placeholder{color:var(--text-placeholder);opacity:1}
+input:not([type=radio]):not([type=checkbox]):hover,select:hover,textarea:hover{border-color:var(--border-control-hover)}
+input:not([type=radio]):not([type=checkbox]):focus,select:focus,textarea:focus{outline:none;border-color:var(--color-blue-600);box-shadow:var(--focus-ring-field)}
+input[aria-invalid=true]{border-color:var(--state-error-text)!important}
+input:disabled,select:disabled,textarea:disabled{background:var(--surface-page);cursor:not-allowed}
+#account-content form label,.catalog-controls label,#admin-content label{color:var(--text-label);font-weight:var(--fw-medium)}
+#account-content form input{min-height:var(--control-height)}
+.search-submit,#account-submit,#continue,#confirm-form button,.admin-editor-footer button[type=submit],#admin-save-receipt,.property-page-form>button[type=submit]{background:var(--color-blue-600);border-color:var(--color-blue-600);color:var(--text-on-brand);box-shadow:var(--shadow-primary)}
+.search-submit:hover,#account-submit:hover,#continue:hover,#confirm-form button:hover,.admin-editor-footer button[type=submit]:hover,#admin-save-receipt:hover,.property-page-form>button[type=submit]:hover{background:var(--color-blue-700);color:var(--text-on-brand)}
+#continue:disabled{background:var(--surface-page);border-color:var(--border-control);color:var(--text-muted);box-shadow:none}
+.site-header .account-menu{background:var(--color-navy-700);color:var(--text-on-brand);font-weight:var(--fw-semibold)}
+.site-header .account-menu:hover{background:var(--color-navy-800)}
+.site-header nav{font-weight:var(--fw-semibold)}
+.brand,.section-head a{font-weight:var(--fw-semibold)}
+.hero{background:var(--surface-page)}
+.hero h1{font-size:clamp(2rem,4vw,var(--fs-display));font-weight:var(--fw-display);line-height:var(--lh-tight);letter-spacing:var(--ls-display);text-transform:none}
+.eyebrow{font-size:var(--fs-2xs);font-weight:var(--fw-bold);letter-spacing:var(--ls-eyebrow)}
+.site-footer{background:var(--color-navy-700);color:var(--text-on-brand-muted)}
+.site-footer a,.site-footer p,.site-footer small{color:var(--text-on-brand-muted)}
+.site-footer strong{color:var(--text-on-brand);font-weight:var(--fw-semibold)}
+.account-danger,.account-danger:hover{color:var(--state-error-text);background:var(--state-error-bg);border-color:var(--state-error-border)}
+.admin-topline,#admin-content .admin-stats span,#admin-content .admin-sidebar nav button span,#admin-attachment-list button{font-size:var(--fs-2xs)}
+.admin-section-heading h2{font-size:var(--fs-sm);font-weight:var(--fw-semibold)}
+.admin-main{background:var(--surface-form)}
+.admin-sidebar{background:var(--surface-page)}
+#admin-content .admin-sidebar nav button[aria-current]{color:var(--text-on-brand);background:var(--color-navy-700)}
+/* Acesso: painel e formulário em duas colunas; a navegação continua na mesma página. */
+body[data-access=locked][data-view=conta] #conta{width:100%;padding:0;margin:0}
+body[data-access=locked][data-view=conta] #conta>.breadcrumb,
+body[data-access=locked][data-view=conta] #conta>h1,
+body[data-access=locked] #account-status{display:none}
+.account-access{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:var(--pousada-login-height)}
+.access-story{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:var(--space-12);background:var(--color-navy-700);color:var(--text-on-brand)}
+.access-story .eyebrow{color:var(--text-eyebrow-on-brand);max-width:44ch}
+.access-headline{font-size:var(--fs-display);font-weight:var(--fw-display);line-height:var(--lh-tight);letter-spacing:var(--ls-display);margin-top:var(--space-6);max-width:16ch}
+.access-headline em{font-style:normal;color:var(--color-sky-300)}
+.access-description{font-size:var(--fs-sm);color:var(--text-on-brand-muted);max-width:40ch;margin-top:var(--space-5)}
+.access-story figure{margin:var(--space-8) 0 0;max-width:var(--form-max-width)}
+.access-story img{width:100%;height:auto;aspect-ratio:2;object-position:center 60%}
+.access-story figcaption{margin-top:var(--space-2);font-size:var(--fs-2xs);color:var(--text-on-brand-muted)}
+.access-values{display:flex;flex-wrap:wrap;gap:var(--space-4);margin-top:var(--space-6);font-size:var(--fs-2xs);color:var(--text-on-brand-muted)}
+.access-values span{padding-top:var(--space-3);border-top:var(--pousada-rule) solid var(--color-navy-500)}
+.access-form-side{display:flex;align-items:center;justify-content:center;padding:var(--space-12);background:var(--surface-form);min-width:0}
+.access-form-wrap{width:100%;max-width:var(--form-max-width)}
+.access-icon{display:flex;align-items:center;justify-content:center;width:var(--space-12);height:var(--space-12);color:var(--color-blue-500);background:var(--surface-tint);border:var(--pousada-rule) solid var(--border-tint);margin-bottom:var(--space-6)}
+.access-form-wrap h1{font-size:var(--fs-lg);font-weight:var(--fw-semibold);line-height:var(--lh-tight);letter-spacing:var(--ls-title)}
+.access-form-wrap>p{margin-top:var(--space-3);font-size:var(--fs-xs);line-height:var(--lh-relaxed);color:var(--text-muted)}
+#account-content #account-login{gap:var(--space-5);margin-top:var(--space-8)}
+#account-content #account-login label{font-size:var(--fs-xs);font-weight:var(--fw-medium);gap:var(--space-2)}
+#account-content #account-login input{min-height:var(--control-height);padding:var(--space-3);font-size:var(--fs-xs)}
+.access-password{display:block;position:relative;min-width:0}
+#account-content #account-login .access-password input{padding-right:var(--space-12)}
+#account-content #account-login .access-password button{position:absolute;right:0;top:0;width:var(--target-min);height:var(--control-height);padding:0;border:0;min-height:var(--control-height);background:transparent;color:var(--text-muted)}
+#account-content #account-login .access-password button:hover{color:var(--text-strong);background:var(--surface-tint)}
+#account-submit{width:100%;min-height:var(--control-height);font-size:var(--fs-xs);font-weight:var(--fw-semibold)}
+.access-error{padding:var(--space-3) var(--space-4);color:var(--state-error-text);background:var(--state-error-bg);border:var(--pousada-rule) solid var(--state-error-border);font-size:var(--fs-xs)}
+#account-password-help{font-size:var(--fs-2xs)}
+#account-switch{font-size:var(--fs-xs);font-weight:var(--fw-semibold);min-height:var(--target-min);margin-top:var(--space-2)}
+.access-security{padding-top:var(--space-5);border-top:var(--pousada-rule) solid var(--border-subtle);font-size:var(--fs-2xs)!important}
+.demo-controls{font-size:var(--fs-2xs)}
+.demo-controls button{border:0;box-shadow:none}
+@media(max-width:1050px){.access-story,.access-form-side{padding:var(--space-8)}.access-headline{font-size:calc(var(--fs-display) - var(--fs-sm))}}
+@media(max-width:800px){.account-access{grid-template-columns:minmax(0,1fr);min-height:0}.access-story{display:none}.access-form-side{padding:var(--space-10) var(--space-6) var(--space-12)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.site-footer [data-cookie-settings]{align-self:flex-start;min-height:var(--target-min);padding:var(--space-2) var(--space-3);border:0;color:var(--text-on-brand-muted);background:transparent}
+#admin-content .property-form label{align-content:start}
+
+.account-link,#account-switch{border:0;box-shadow:none;background:transparent}

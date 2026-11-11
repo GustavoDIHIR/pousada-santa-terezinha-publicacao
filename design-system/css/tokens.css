@@ -1,0 +1,123 @@
+/*
+ * Fluxo de Caixa PR — Design Tokens v1.1
+ * Fonte da verdade visual para a tela de login e para todos os sistemas
+ * da instituição. Documentação: ../DESIGN-SYSTEM.md
+ *
+ * Regra: componentes NUNCA usam cor, tamanho ou espaçamento literal;
+ * usam sempre um destes tokens.
+ * Valores marcados "A11Y" diferem do código original do Fluxo de Caixa PR
+ * porque o valor original não atingia o contraste mínimo WCAG 2.2 AA.
+ */
+:root {
+  /* ── Tipografia ─────────────────────────────────────────── */
+  --font-sans:
+    "IBM Plex Sans", Inter, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --fs-2xs: 0.6875rem; /* 11px — rótulos de marca, rodapés (mínimo absoluto) */
+  --fs-xs: 0.75rem; /* 12px — labels, inputs, textos de apoio */
+  --fs-sm: 0.875rem; /* 14px — corpo base */
+  --fs-lg: 1.6875rem; /* 27px — título do formulário */
+  --fs-display: 3.4375rem; /* 55px — manchete do painel institucional */
+  --fw-regular: 400;
+  --fw-display: 400; /* Plex Sans não tem 450 */
+  --fw-medium: 500; /* Plex Sans não tem 550 */
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --lh-tight: 1.15;
+  --lh-body: 1.6;
+  --lh-relaxed: 1.8;
+  --ls-display: -1.6px;
+  --ls-title: -0.7px;
+  --ls-eyebrow: 1.7px;
+
+  /* ── Cores: marca ───────────────────────────────────────── */
+  --color-navy-900: #132b49; /* sombras */
+  --color-navy-800: #152f4d; /* texto escuro de marca */
+  --color-navy-700: #15334f; /* fundo do painel institucional */
+  --color-navy-600: #1c3d5c; /* superfície elevada no painel */
+  --color-navy-500: #2b5271; /* superfície destacada no painel */
+  --color-blue-600: #1d6fdb; /* ação primária, foco */
+  --color-blue-700: #185bb7; /* ação primária :hover */
+  --color-blue-300: #80b4f3; /* anel de foco por teclado */
+  --color-blue-500: #3f77aa; /* ícone do cabeçalho do formulário (4,2:1 sobre surface-tint) */
+  --color-sky-300: #92bddc; /* destaque na manchete */
+  --color-sky-200: #acd3f7; /* ícone da marca */
+
+  /* ── Cores: superfícies e bordas ────────────────────────── */
+  --surface-page: #f5f7fa; /* fundo do app */
+  --surface-form: #fbfcfe; /* fundo do lado do formulário */
+  --surface-card: #ffffff; /* inputs, cartões */
+  --surface-tint: #edf3fa; /* ícone/avatar em destaque suave */
+  --border-subtle: #e6ecf2; /* divisórias */
+  --border-tint: #e0eaf4;
+  --border-control: #8696a8; /* A11Y: borda de input (3:1). Antes #dce3ea (1,29:1) */
+  --border-control-hover: #5f7185;
+
+  /* ── Cores: texto ───────────────────────────────────────── */
+  --text-strong: #263e58; /* títulos (10,7:1) */
+  --text-base: #263b51; /* corpo (10,7:1) */
+  --text-label: #45586c; /* labels (7,1:1) */
+  --text-muted: #5f7185; /* A11Y: apoio (4,9:1). Antes #8a9bad (2,77:1) */
+  --text-placeholder: #66788c; /* A11Y: placeholder (4,6:1). Antes #9aa6b3 (2,48:1) */
+  --text-on-brand: #ffffff;
+  --text-on-brand-muted: #a9bfd0; /* A11Y: texto de apoio no painel (6,8:1) */
+  --text-on-brand-faint: #86a3bd; /* A11Y: rodapé do painel (4,9:1). Antes #6a88a4 (3,5:1) */
+  --text-eyebrow: #5f7185;
+  --text-eyebrow-on-brand: #a3bdcf;
+  --text-link: #276dbe;
+
+  /* ── Cores: estado ──────────────────────────────────────── */
+  --state-error-text: #a34539;
+  --state-error-bg: #fff0ed;
+  --state-error-border: #f1d7d0;
+  --state-success-text: #21866a; /* só ícones/realce; texto usa --state-success-strong */
+  --state-success-strong: #176a53;
+  --state-success-bg: #183f34; /* toast */
+  --state-success-on: #effff7;
+
+  /* ── Espaçamento (base 4px) ─────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Forma ──────────────────────────────────────────────── */
+  --radius-sm: 7px; /* inputs, botões, alertas */
+  --radius-md: 9px; /* nós do diagrama, toast */
+  --radius-lg: 14px; /* ícone do formulário */
+  --radius-full: 999px;
+
+  /* ── Elevação e foco ────────────────────────────────────── */
+  --shadow-primary: 0 2px 3px #1d6fdb16;
+  --shadow-toast: 0 5px 25px #183f3425;
+  --shadow-overlay: -10px 0 50px #132b4920;
+  --focus-ring-field: 0 0 0 3px #1d6fdb26; /* halo ao focar campo */
+  --focus-ring-keyboard: 3px solid var(--color-blue-300); /* botões e links */
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  --bp-lg: 1250px;
+  --bp-md: 1050px;
+  --bp-sm: 800px; /* abaixo: some o painel institucional */
+  --bp-xs: 480px;
+  --form-max-width: 360px;
+  --control-height: 46px; /* A11Y: alvo de toque ≥ 44px */
+  --target-min: 44px;
+
+  /* ── Movimento ──────────────────────────────────────────── */
+  --motion-fast: 0.15s;
+  --motion-ease: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0s;
+  }
+}
