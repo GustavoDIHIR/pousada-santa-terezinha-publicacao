@@ -1,6 +1,6 @@
-import './demo.js?v=0d1c97ff';
-import {paymentLabel} from './reservation-utils.js?v=0d1c97ff';
-import { logoutAccount, refreshAccount } from './account.js?v=0d1c97ff';
+import './demo.js?v=829487a0';
+import {paymentLabel} from './reservation-utils.js?v=829487a0';
+import { logoutAccount, refreshAccount } from './account.js?v=829487a0';
 
 const admin = document.querySelector('#admin-content');
 

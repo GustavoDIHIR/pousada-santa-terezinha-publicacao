@@ -1,4 +1,4 @@
-import { degrees, PDFDocument, ParseSpeeds, rgb, StandardFonts } from './pdf-lib.js?v=0d1c97ff';
+import { degrees, PDFDocument, ParseSpeeds, rgb, StandardFonts } from './pdf-lib.js?v=829487a0';
 
 const attachmentBytes = 2 * 1024 * 1024;
 const storedAttachmentBytes = attachmentBytes + 64 * 1024;
