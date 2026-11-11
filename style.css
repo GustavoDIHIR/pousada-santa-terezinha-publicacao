@@ -729,7 +729,6 @@ dialog{box-shadow:0 24px 80px #07132b38}
 .booking-empty>a{display:inline-block;margin-left:1rem;font-weight:800}
 @media(max-width:520px){.booking-empty>a{display:block;margin:1rem 0 0}.cookie-content{padding-right:2.5rem}}
 
-.site-footer{display:none!important}
 .prototype-notice{display:none!important}.prototype-notice .wrap{display:flex;gap:1rem;align-items:center}.prototype-notice strong{white-space:nowrap}.property-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.property-form label{display:grid;gap:.4rem}.property-form input,.property-form textarea{width:100%;padding:.6rem;border:1px solid var(--line);font:inherit}.property-panel>article{margin-bottom:1rem}.demo-reset-button{display:flex;width:100%;min-height:75px;margin:1.5rem 0;font-size:1.1rem;text-align:left}#property-public-contacts{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem}#property-public-contacts span{width:100%;font-size:.8rem}@media(max-width:640px){.prototype-notice .wrap{display:block}.prototype-notice strong{display:block;margin-bottom:.25rem}.property-form{grid-template-columns:1fr}}
 
 .availability-tag,.available-beds{background:#e8f5ed!important;color:#1d663e!important;font-weight:800}.available-beds{padding:.7rem 1rem;margin-bottom:1rem}
