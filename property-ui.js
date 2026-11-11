@@ -1,4 +1,4 @@
-import './demo.js?v=f4fab036';
+import './demo.js?v=935aa02d';
 const labels = {name:'Nome de apresentação',legalName:'Razão social',taxId:'CNPJ / identificação',address:'Endereço',city:'Cidade e estado',phone:'Telefone',whatsapp:'WhatsApp com DDD',email:'E-mail de contato',instagram:'Instagram (link HTTPS)',facebook:'Facebook (link HTTPS)',paymentMethods:'Formas de pagamento',paymentInstructions:'Orientações sobre pagamento',checkInTime:'Horário de check-in (HH:MM)',checkOutTime:'Horário de check-out (HH:MM)'};
 let currentProperty;
 async function post(path,data={}) {
@@ -110,6 +110,54 @@ managersButton.onclick=async()=>{
   }catch(error){if(version===managerRevision)panel.append(element('p',error.message,'status'));}
 };
 
+const whatsappDialog=element('dialog');whatsappDialog.id='whatsapp-bot-dialog';whatsappDialog.setAttribute('aria-label','Bot de atendimento WhatsApp');
+whatsappDialog.innerHTML=`
+  <div class="admin-modal-heading" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem">
+    <div>
+      <strong>Bot WhatsApp · Pousada Santa Terezinha</strong>
+      <div class="muted" style="font-size:.82rem">Número de teste ativo: +55 12 99188-4876 · Menu de 1 a 10</div>
+    </div>
+    <button type="button" id="whatsapp-bot-close" class="account-secondary" style="min-height:36px;padding:.25rem .75rem">Fechar</button>
+  </div>
+  <div id="whatsapp-bot-log" style="background:#eef4f8;border:1px solid #cbd5e1;border-radius:8px;padding:.75rem;height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;font-size:.9rem;white-space:pre-wrap"></div>
+  <div id="whatsapp-bot-quick" style="display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0"></div>
+  <form id="whatsapp-bot-form" style="display:flex;gap:.5rem;align-items:center">
+    <input id="whatsapp-bot-input" type="text" placeholder="Digite uma opção de 1 a 10, datas ou código..." style="flex:1" autocomplete="off">
+    <button type="submit" style="min-height:42px;padding:0 1rem">Enviar</button>
+  </form>
+`;
+document.body.append(whatsappDialog);
+const botLog=whatsappDialog.querySelector('#whatsapp-bot-log');
+const botInput=whatsappDialog.querySelector('#whatsapp-bot-input');
+const botQuick=whatsappDialog.querySelector('#whatsapp-bot-quick');
+whatsappDialog.querySelector('#whatsapp-bot-close').onclick=()=>whatsappDialog.close();
+function appendBotBubble(text,fromUser=false){
+  const item=element('div',text);
+  item.style.cssText=`align-self:${fromUser?'flex-end':'flex-start'};max-width:88%;padding:.55rem .75rem;border-radius:8px;background:${fromUser?'#142e4c':'#ffffff'};color:${fromUser?'#ffffff':'#0f172a'};border:1px solid ${fromUser?'#142e4c':'#cbd5e1'}`;
+  botLog.append(item);botLog.scrollTop=botLog.scrollHeight;
+}
+async function sendBotText(text,showUser=true){
+  if(showUser)appendBotBubble(text,true);
+  try{
+    const res=await post('whatsapp/test',{from:'5512991884876',text});
+    appendBotBubble(res.reply,false);
+  }catch(err){appendBotBubble(err.message||'Erro ao comunicar com o bot.',false);}
+}
+for(const opt of ['0','1','2','3','4','5','6','7','8','9','10']){
+  const btn=element('button',opt==='0'?'0 · Menu':opt,'account-secondary');
+  btn.type='button';btn.style.cssText='min-height:32px;padding:.15rem .55rem;font-size:.82rem';
+  btn.onclick=()=>sendBotText(opt,true);
+  botQuick.append(btn);
+}
+whatsappDialog.querySelector('#whatsapp-bot-form').onsubmit=event=>{
+  event.preventDefault();const val=botInput.value.trim();if(!val)return;botInput.value='';sendBotText(val,true);
+};
+window.openWhatsappBot=()=>{
+  if(!whatsappDialog.open)whatsappDialog.showModal();
+  if(!botLog.childElementCount)sendBotText('0',false);
+  botInput.focus();
+};
+
 const resetDialog=element('dialog');resetDialog.setAttribute('aria-label','Confirmar alteração dos dados de teste');document.body.append(resetDialog);
 let resetMode;
 const title=element('h2');const note=element('p');const status=element('p','','status');const close=element('button','Cancelar','account-secondary');close.type='button';close.onclick=()=>resetDialog.close();
@@ -118,6 +166,7 @@ confirm.onclick=async()=>{confirm.disabled=true;status.textContent='';try{await 
 demoButton.onclick=()=>{
   show('Ambiente de testes','Operações exclusivas deste protótipo.',demoButton);
   panel.append(element('p','E-mails, pagamentos reais e emissão fiscal não estão disponíveis nesta versão. O envio da confirmação por e-mail será implementado na versão final.','fiction-banner'));
+  const waBtn=element('button','Abrir simulador do Bot WhatsApp (+55 12 99188-4876 · Opções 1 a 10)','demo-reset-button');waBtn.type='button';waBtn.onclick=()=>window.openWhatsappBot();panel.append(waBtn);
   for(const[mode,label,description]of[['restore','Restaurar dados de demonstração','Apaga os quartos, planos, reservas, anexos e dados da pousada personalizados e restaura os 15 quartos de exemplo.'],['clear','Limpar dados para testar com dados próprios','Apaga os quartos, planos, reservas, anexos e dados da pousada personalizados. O catálogo ficará vazio, inclusive após reiniciar o site.']]){
     const button=element('button',label,'demo-reset-button');button.type='button';button.onclick=()=>{resetMode=mode;title.textContent=label;note.textContent=description+' As contas e os acessos de administrador serão preservados. Esta operação não pode ser desfeita.';status.textContent='';resetDialog.showModal();};panel.append(button);
   }

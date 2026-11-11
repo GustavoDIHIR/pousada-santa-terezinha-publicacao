@@ -1,6 +1,6 @@
-import {paymentOptions,reservationEmail} from './reservation-utils.js?v=f4fab036';
+import {paymentOptions,paymentLabel,reservationEmail,whatsappBotMenu,whatsappFaqAnswer} from './reservation-utils.js?v=935aa02d';
 // Exclusivo do protótipo estático: simulação local, sem autenticação ou agenda reais.
-import { seedRooms, seedProperty } from './demo-seed.js?v=f4fab036';
+import { seedRooms, seedProperty } from './demo-seed.js?v=935aa02d';
 const storageKey = 'pousada-prototipo-v1:' + location.pathname;
 const originalFetch = window.fetch.bind(window);
 const day = 86400000;
@@ -93,7 +93,7 @@ async function receiptAction(input,editing){
  if(editing)requireAdmin();const booking=bookingFor(input.code);
  const paymentLabels={'':'Não registrado',pix:'Pix',credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Transferência bancária'};
  const saved=state.receipts[booking.code]||{paymentMethod:booking.paymentMethod||'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
- const receipt=await import('./receipt.js?v=f4fab036');
+ const receipt=await import('./receipt.js?v=935aa02d');
  if(editing&&(input.save||input.preview)){
   if(!Object.hasOwn(paymentLabels,method)||!Array.isArray(input.documents)||input.documents.length>3)fail('Revise pagamento e anexos.');
   files=[];
@@ -115,6 +115,79 @@ async function receiptAction(input,editing){
 }
 async function handle(path,input){
  if(path.startsWith('account/'))return accountAction(path.slice(8),input);
+ if(path==='whatsapp/test'){
+  const sender=String(input.from||'5512991884876').replace(/\D/g,'')||'5512991884876';
+  const text=String(input.text||'0').trim();const lower=text.toLowerCase();
+  state.whatsappSessions||={};
+  const session=state.whatsappSessions[sender]||{step:'menu',context:{}};
+  const baseUrl=new URL('./',location.href).href;
+  const menu=()=>whatsappBotMenu(state.property.name);
+  if(['0','menu','inicio','início','voltar','reiniciar'].includes(lower)){state.whatsappSessions[sender]={step:'menu',context:{}};return {reply:menu(),step:'menu',sender};}
+  if(lower==='10'||/\b(humano|atendente|falar com a pousada|equipe|ajuda)\b/i.test(lower)){state.whatsappSessions[sender]={step:'human',context:{}};return {reply:'Encaminhamos seu atendimento para a equipe da pousada. Um responsável continuará por aqui em instantes. Para voltar ao menu automático (1 a 10), digite 0.',step:'human',sender};}
+  if(session.step==='human'&&/^([1-9]|10)$/.test(lower))session.step='menu';
+  if(session.step==='menu'){
+   if(lower==='1'||lower.startsWith('reservar')){state.whatsappSessions[sender]={step:'dates',context:{}};return {reply:'Informe a data de entrada e a data de saída (ex.: 2026-11-18 2026-11-20 ou 18/11/2026 a 20/11/2026):',step:'dates',sender};}
+   if(lower==='2'||lower.startsWith('consultar')){state.whatsappSessions[sender]={step:'lookup',context:{}};return {reply:'Informe o código da sua reserva (18 caracteres):',step:'lookup',sender};}
+   const num=Number.parseInt(lower,10);
+   if(num>=3&&num<=9){
+    const ans=whatsappFaqAnswer(num,{propertyName:state.property.name,checkInTime:state.property.checkInTime,checkOutTime:state.property.checkOutTime,baseUrl});
+    if(ans)return {reply:ans,step:'menu',sender};
+   }
+   return {reply:menu(),step:'menu',sender};
+  }
+  if(session.step==='lookup'){
+   const code=text.toUpperCase().replace(/[^A-F0-9]/g,'');
+   const found=state.reservations.find(b=>b.code===code);
+   if(!found)return {reply:'Reserva não localizada. Confira o código de 18 caracteres ou digite 0 para voltar ao menu.',step:'lookup',sender};
+   state.whatsappSessions[sender]={step:'menu',context:{}};
+   const st=found.cancelled?'Cancelada':found.checkedIn?'Check-in realizado':found.approval==='confirmed'?'Aprovada pela pousada':'Em análise pela pousada';
+   return {reply:`Reserva ${found.code} (${st})\nAcomodação: ${found.offer.name}\nPeríodo: ${found.offer.arrival} a ${found.offer.departure}\nTotal: R$ ${(found.offer.total/100).toFixed(2).replace('.',',')}\nDetalhes: ${baseUrl}#reserva/${found.code}`,step:'menu',code:found.code,sender};
+  }
+  if(session.step==='dates'){
+   const parseDate=t=>/^\d{4}-\d{2}-\d{2}$/.test(t)?t:t.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)?t.replace(/^(\d{2})\/(\d{2})\/(\d{4})$/,'$3-$2-$1'):null;
+   const [arrival,departure]=text.split(/(?:\s+a\s+|\s+até\s+|\s+|,)/i).map(parseDate).filter(Boolean);
+   if(!arrival||!departure||arrival<today()||departure<=arrival)return {reply:'Datas inválidas. Informe entrada a partir de hoje e saída (ex.: 2026-11-18 2026-11-20):',step:'dates',sender};
+   state.whatsappSessions[sender]={step:'guests',context:{arrival,departure}};
+   return {reply:'Informe a quantidade de adultos e crianças (ex.: 2 0 para 2 adultos sem crianças):',step:'guests',sender};
+  }
+  if(session.step==='guests'){
+   const [adults,children=0]=text.match(/\d+/g)?.map(Number)||[];
+   if(!Number.isInteger(adults)||adults<1||children<0||adults+children>12)return {reply:'Informe pelo menos 1 adulto e até 12 hóspedes no total (ex.: 2 0):',step:'guests',sender};
+   state.whatsappSessions[sender]={step:'type',context:{...session.context,adults,children}};
+   return {reply:'Qual tipo de acomodação prefere?\n1 - Privativa\n2 - Compartilhada\n3 - Qualquer tipo',step:'type',sender};
+  }
+  if(session.step==='type'){
+   const roomType=lower==='1'?'private':lower==='2'?'shared':lower==='3'?'all':null;
+   if(!roomType)return {reply:'Escolha 1 (Privativa), 2 (Compartilhada) ou 3 (Qualquer tipo):',step:'type',sender};
+   const choices=offers(session.context).filter(r=>roomType==='all'||r.type===roomType).flatMap(r=>r.options.map(o=>({...o,roomName:r.name}))).slice(0,5);
+   if(!choices.length){state.whatsappSessions[sender]={step:'dates',context:{}};return {reply:'Não há vagas para esse período. Informe novas datas ou digite 0 para o menu:',step:'dates',sender};}
+   state.whatsappSessions[sender]={step:'offer',context:{...session.context,choices}};
+   return {reply:['Opções disponíveis na agenda:',...choices.map((c,i)=>`${i+1} - ${c.name} (${c.planName}) · Total R$ ${(c.total/100).toFixed(2).replace('.',',')}`),'Responda com o número da opção desejada:'].join('\n'),step:'offer',sender};
+  }
+  if(session.step==='offer'){
+   const selected=session.context.choices?.[Number.parseInt(text,10)-1];
+   if(!selected)return {reply:'Escolha uma opção válida da lista:',step:'offer',sender};
+   state.whatsappSessions[sender]={step:'payment',context:{...session.context,selected}};
+   return {reply:['Escolha a forma de pagamento:',...paymentOptions.map((p,i)=>`${i+1} - ${p.label}`),'Não envie dados de cartão ou senha no chat.'].join('\n'),step:'payment',sender};
+  }
+  if(session.step==='payment'){
+   const option=paymentOptions[Number.parseInt(text,10)-1];
+   if(!option)return {reply:'Escolha uma forma de pagamento de 1 a 5:',step:'payment',sender};
+   const s=session.context.selected;
+   state.whatsappSessions[sender]={step:'confirm',context:{...session.context,paymentMethod:option.id}};
+   return {reply:`Resumo do pedido de reserva:\nAcomodação: ${s.name}\nPlano: ${s.planName}\nPeríodo: ${s.arrival} a ${s.departure}\nHóspedes: ${s.adults+s.children}\nTotal: R$ ${(s.total/100).toFixed(2).replace('.',',')}\nForma de pagamento: ${option.label}\nConfirma o envio do pedido para análise da pousada?\n1 - Sim, enviar solicitação\n2 - Não, cancelar`,step:'confirm',sender};
+  }
+  if(session.step==='confirm'){
+   if(lower==='2'||lower==='nao'||lower==='não'){state.whatsappSessions[sender]={step:'menu',context:{}};return {reply:'Solicitação cancelada.\n\n'+menu(),step:'menu',sender};}
+   if(lower!=='1'&&lower!=='sim')return {reply:'Responda 1 para confirmar ou 2 para cancelar:',step:'confirm',sender};
+   const {selected,paymentMethod}=session.context;
+   const booking={approval:'pending',code:id(),checkedIn:false,cancelled:false,ownerRef:user()?.id||'client',accountBound:true,purchaseNumber:id(12),paymentMethod,createdAt:new Date().toISOString(),confirmedAt:null,checkInNumber:null,checkedInAt:null,offer:selected};
+   state.reservations.unshift(booking);state.whatsappSessions[sender]={step:'menu',context:{}};
+   return {reply:`Solicitação enviada! Código: ${booking.code}\nSituação: Em análise pela pousada.\nForma de pagamento registrada: ${paymentLabel(paymentMethod)}\nAcompanhe sua reserva: ${baseUrl}#reserva/${booking.code}`,step:'menu',code:booking.code,sender};
+  }
+  state.whatsappSessions[sender]={step:'menu',context:{}};
+  return {reply:menu(),step:'menu',sender};
+ }
  requireUser();
  if(path==='catalog')return {rooms:catalog().filter(room=>room.active)};
  if(path==='search'){
@@ -215,6 +288,7 @@ function demoControls(){
   const button=document.createElement('button');button.type='button';button.textContent='Testar como '+label;
   button.onclick=async()=>{const result=await window.fetch('/api/account/login',{method:'POST',body:JSON.stringify({email,password:'Demonstracao123!'})});if(!result.ok){alert((await result.json()).error);return;}location.hash=hash;location.reload();};bar.append(button);
  }
+ const botBtn=document.createElement('button');botBtn.type='button';botBtn.textContent='Bot WhatsApp';botBtn.onclick=()=>window.openWhatsappBot?.();bar.append(botBtn);
  const reset=document.createElement('button');reset.type='button';reset.textContent='Reiniciar protótipo';reset.onclick=()=>{if(confirm('Apagar apenas os dados de demonstração desta aba e restaurar os exemplos?')){sessionStorage.removeItem(storageKey);location.reload();}};bar.append(reset);document.body.prepend(bar);
  const intro=document.querySelector('#account-form-intro');if(intro)intro.textContent='Simulação local. Use os botões de teste acima ou cliente@example.test com a senha Demonstracao123!. Não informe dados ou senhas reais.';
  const privacy=document.querySelector('#privacidade');if(privacy){const notice=document.createElement('p');notice.className='fiction-banner';notice.textContent='Nesta publicação estática, contas, fotos, anexos e reservas são simulações guardadas apenas no sessionStorage desta aba. Os perfis podem ser alternados livremente para avaliação. Isso não representa autenticação segura nem disponibilidade compartilhada entre visitantes. Não use dados pessoais ou documentos reais.';privacy.prepend(notice);}

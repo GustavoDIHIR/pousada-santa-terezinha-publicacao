@@ -1,6 +1,6 @@
-import './demo.js?v=f4fab036';
-import {paymentOptions,paymentLabel} from './reservation-utils.js?v=f4fab036';
-import { downloadReceipt, openAccountPanel, openAccountReservation, refreshAccount } from './account.js?v=f4fab036';
+import './demo.js?v=935aa02d';
+import {paymentOptions,paymentLabel} from './reservation-utils.js?v=935aa02d';
+import { downloadReceipt, openAccountPanel, openAccountReservation, refreshAccount } from './account.js?v=935aa02d';
 
 const $ = selector => document.querySelector(selector);
 const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
