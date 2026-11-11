@@ -1,4 +1,4 @@
-import './demo.js?v=17071bd8';
+import './demo.js?v=0d1c97ff';
 const labels = {name:'Nome de apresentação',legalName:'Razão social',taxId:'CNPJ / identificação',address:'Endereço',city:'Cidade e estado',phone:'Telefone',whatsapp:'WhatsApp com DDD',email:'E-mail de contato',instagram:'Instagram (link HTTPS)',facebook:'Facebook (link HTTPS)',paymentMethods:'Formas de pagamento',paymentInstructions:'Orientações sobre pagamento',checkInTime:'Horário de check-in (HH:MM)',checkOutTime:'Horário de check-out (HH:MM)'};
 let currentProperty;
 async function post(path,data={}) {
@@ -111,19 +111,20 @@ managersButton.onclick=async()=>{
 };
 
 const whatsappDialog=element('dialog');whatsappDialog.id='whatsapp-bot-dialog';whatsappDialog.setAttribute('aria-label','Bot de atendimento WhatsApp');
+whatsappDialog.style.cssText='width:min(500px,calc(100% - 1.25rem));padding:1rem;border:1px solid #cbd5e1';
 whatsappDialog.innerHTML=`
-  <div class="admin-modal-heading" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem">
-    <div>
-      <strong>Bot WhatsApp · Pousada Santa Terezinha</strong>
-      <div class="muted" style="font-size:.82rem">Número de teste ativo: +55 12 99188-4876 · Menu principal (1 a 4) com submenus</div>
+  <div class="admin-modal-heading" style="display:flex;justify-content:space-between;align-items:flex-start;gap:.75rem;margin-bottom:.65rem">
+    <div style="min-width:0">
+      <strong style="display:block;font-size:.98rem">Bot WhatsApp · Pousada Santa Terezinha</strong>
+      <div class="muted" style="font-size:.78rem;line-height:1.35;margin-top:.15rem">Teste ativo: +55 12 99188-4876 · Menu (1 a 4) com submenus</div>
     </div>
-    <button type="button" id="whatsapp-bot-close" class="account-secondary" style="min-height:36px;padding:.25rem .75rem">Fechar</button>
+    <button type="button" id="whatsapp-bot-close" class="account-secondary" style="min-height:36px;padding:.25rem .7rem;flex:none">Fechar</button>
   </div>
-  <div id="whatsapp-bot-log" style="background:#eef4f8;border:1px solid #cbd5e1;border-radius:8px;padding:.75rem;height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;font-size:.9rem;white-space:pre-wrap"></div>
-  <div id="whatsapp-bot-quick" style="display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0"></div>
-  <form id="whatsapp-bot-form" style="display:flex;gap:.5rem;align-items:center">
-    <input id="whatsapp-bot-input" type="text" placeholder="Escolha uma opção (1 a 4) ou digite aqui..." style="flex:1" autocomplete="off">
-    <button type="submit" style="min-height:42px;padding:0 1rem">Enviar</button>
+  <div id="whatsapp-bot-log" style="background:#eef4f8;border:1px solid #cbd5e1;border-radius:8px;padding:.65rem;height:clamp(210px,42dvh,300px);overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;font-size:.86rem;white-space:pre-wrap"></div>
+  <div id="whatsapp-bot-quick" style="display:flex;flex-wrap:wrap;gap:.35rem;margin:.6rem 0"></div>
+  <form id="whatsapp-bot-form" style="display:flex;gap:.45rem;align-items:center">
+    <input id="whatsapp-bot-input" type="text" placeholder="Digite uma opção (1 a 4)..." style="flex:1;min-width:0" autocomplete="off">
+    <button type="submit" style="min-height:42px;padding:0 .9rem;flex:none">Enviar</button>
   </form>
 `;
 document.body.append(whatsappDialog);

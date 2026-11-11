@@ -436,10 +436,13 @@ dialog p{color:var(--muted);margin:.4rem 0 .8rem}
   .cookie-content{align-items:start;flex-direction:column;gap:.65rem}
 }
 @media(max-width:430px){
-  .header-actions{display:grid;gap:.35rem}
-  .site-header .account-menu{font-size:.78rem;padding-inline:.65rem;gap:.4rem}
-  .site-header .account-menu .icon{width:17px;height:17px}
+  .header-actions{display:flex;align-items:center;gap:.35rem}
+  .site-header .account-menu,.menu-toggle{font-size:.75rem;padding:.45rem .6rem;min-height:38px;gap:.3rem}
+  .site-header .account-menu .icon,.menu-toggle .icon{width:15px;height:15px}
   .header-actions .my-booking{display:none}
+}
+@media(max-width:360px){
+  .site-header .account-menu .icon{display:none}
 }
 .site-header .mobile-reservation{display:none}
 .admin-nav-actions{display:flex;align-items:center;gap:.8rem}

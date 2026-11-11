@@ -1,4 +1,4 @@
-import './demo.js?v=17071bd8';
+import './demo.js?v=0d1c97ff';
 const content = document.querySelector('#account-content');
 const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const dates = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeZone: 'UTC' });

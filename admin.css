@@ -107,10 +107,10 @@
 @media(max-width:1000px){.admin-shell{grid-template-columns:185px minmax(0,1fr)}.admin-sidebar{padding:1rem .65rem}.admin-main{padding:1.1rem}.admin-sidebar nav button{font-size:.7rem!important}.admin-stats>div{padding:.85rem}.admin-section-heading{align-items:start;flex-wrap:wrap}}
 @media(max-width:760px){
  .admin-shell{grid-template-columns:minmax(0,1fr);min-height:0}
- .admin-sidebar{border-right:0;border-bottom:1px solid var(--line);gap:1rem;padding:1rem}
+ .admin-sidebar{border-right:0;border-bottom:1px solid var(--line);gap:.85rem;padding:1rem}
  .admin-brand{display:none}
- .admin-sidebar nav{display:flex;overflow-x:auto;gap:.35rem}
- #admin-content .admin-sidebar nav button{flex:none;padding:.65rem .6rem;white-space:nowrap}
+ .admin-sidebar nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;overflow:visible}
+ #admin-content .admin-sidebar nav button{width:100%;min-width:0;padding:.55rem .65rem;min-height:40px;white-space:normal;font-size:.73rem!important;line-height:1.25}
  .admin-sidebar nav button span{display:none}
  .admin-sidebar-footer{display:flex;justify-content:space-between;align-items:center;margin:0;padding-top:.75rem}
  .admin-sidebar-footer button{min-height:38px;font-size:.7rem!important;padding:.45rem .65rem}
@@ -118,7 +118,19 @@
  .admin-topline{font-size:var(--fs-2xs);margin-bottom:1rem}
  .admin-stats{gap:.4rem}.admin-stats strong{font-size:1.5rem}.admin-stats span{font-size:var(--fs-2xs);line-height:1.5}
  .admin-tools{gap:.6rem}.admin-tools label{min-width:110px}.admin-tools .admin-search{min-width:100%;flex:1}
+ .admin-table-scroll{border:0;background:transparent;overflow-x:visible}
+ .admin-table-scroll table{min-width:0;display:block}
+ .admin-table-scroll thead{display:none}
+ .admin-table-scroll tbody{display:grid;gap:.75rem}
+ .admin-table-scroll tr{display:grid;gap:.6rem;padding:.9rem;background:white;border:1px solid var(--line)}
+ .admin-table-scroll td{display:block;padding:0;border:0}
+ .admin-table-scroll td small{max-width:none}
+ .admin-product-cell{min-width:0}
+ .admin-product-cell strong{min-width:0}
  #admin-photo-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:360px){
+ .admin-sidebar nav{grid-template-columns:1fr}
 }
 @media(max-width:480px){
  .admin-stats>div{padding:.7rem .5rem}.admin-stats span{font-size:var(--fs-2xs)}

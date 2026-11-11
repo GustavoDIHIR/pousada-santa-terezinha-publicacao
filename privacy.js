@@ -1,4 +1,4 @@
-import './demo.js?v=17071bd8';
+import './demo.js?v=0d1c97ff';
 const key = 'pousada-mapa-v1';
 const duration = 180 * 86400000;
 const notice = document.querySelector('#cookie-notice');

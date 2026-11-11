@@ -1,6 +1,6 @@
-import {paymentOptions,paymentLabel,reservationEmail,whatsappBotMenu,whatsappSubmenu,whatsappSubmenuAnswer} from './reservation-utils.js?v=17071bd8';
+import {paymentOptions,paymentLabel,reservationEmail,whatsappBotMenu,whatsappSubmenu,whatsappSubmenuAnswer} from './reservation-utils.js?v=0d1c97ff';
 // Exclusivo do protótipo estático: simulação local, sem autenticação ou agenda reais.
-import { seedRooms, seedProperty } from './demo-seed.js?v=17071bd8';
+import { seedRooms, seedProperty } from './demo-seed.js?v=0d1c97ff';
 const storageKey = 'pousada-prototipo-v1:' + location.pathname;
 const originalFetch = window.fetch.bind(window);
 const day = 86400000;
@@ -93,7 +93,7 @@ async function receiptAction(input,editing){
  if(editing)requireAdmin();const booking=bookingFor(input.code);
  const paymentLabels={'':'Não registrado',pix:'Pix',credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Transferência bancária'};
  const saved=state.receipts[booking.code]||{paymentMethod:booking.paymentMethod||'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
- const receipt=await import('./receipt.js?v=17071bd8');
+ const receipt=await import('./receipt.js?v=0d1c97ff');
  if(editing&&(input.save||input.preview)){
   if(!Object.hasOwn(paymentLabels,method)||!Array.isArray(input.documents)||input.documents.length>3)fail('Revise pagamento e anexos.');
   files=[];
