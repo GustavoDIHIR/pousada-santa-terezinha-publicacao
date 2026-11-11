@@ -46,7 +46,7 @@ export function whatsappSubmenu(group){
    '1 - Tarifas, planos e tipos de quartos',
    '2 - Café da manhã e Restaurante',
    '3 - Comodidades, Wi-Fi e estrutura',
-   '4 - Localização e distância da Canção Nova',
+   '4 - Localização e dados da pousada (CNPJ e WhatsApp)',
    '0 - Voltar ao menu principal',
   ].join('\n');
  }
@@ -105,8 +105,11 @@ export function whatsappSubmenuAnswer(group,optionNumber,{propertyName='Pousada 
     ].join('\n')+footer;
    case 4:
     return [
-     `📍 Localização — ${propertyName}`,
-     '• Cachoeira Paulista – SP, em frente ao Santuário da Canção Nova (acesso a pé em poucos minutos).',
+     `📍 Localização e Dados da Pousada — ${propertyName}`,
+     '• Razão Social: Pousada Santa Terezinha do Menino Jesus Ltda.',
+     '• CNPJ: 12.359.077/0001-31',
+     '• Telefone / WhatsApp: (12) 99221-2423',
+     '• Endereço: Rua Sebastião Fontes, 70 · Cachoeira Paulista – SP, em frente ao Santuário da Canção Nova (acesso a pé em poucos minutos).',
      `• Mapa e endereço no site: ${new URL('#localizacao',site).href}`,
     ].join('\n')+footer;
    default:

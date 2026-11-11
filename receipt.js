@@ -1,4 +1,4 @@
-import { degrees, PDFDocument, ParseSpeeds, rgb, StandardFonts } from './pdf-lib.js?v=4bdedf93';
+import { degrees, PDFDocument, ParseSpeeds, rgb, StandardFonts } from './pdf-lib.js?v=17071bd8';
 
 const attachmentBytes = 2 * 1024 * 1024;
 const storedAttachmentBytes = attachmentBytes + 64 * 1024;
@@ -125,9 +125,16 @@ async function drawCover(pdf, data, appendixPages) {
 
   group('Dados da pousada', 164);
   const property = data.property || {};
-  text([property.legalName || property.name, property.taxId].filter(Boolean).join(' · ') || 'Identificação a preencher pela pousada.', margin, 140, { color: gray, size:9 });
+  const cnpjText = property.taxId ? (/cnpj/i.test(property.taxId) ? property.taxId : `CNPJ: ${property.taxId}`) : '';
+  text([property.legalName || property.name, cnpjText].filter(Boolean).join(' · ') || 'Identificação a preencher pela pousada.', margin, 140, { color: gray, size:9 });
   text([property.address, property.city].filter(Boolean).join(' · '), margin, 122, { color: gray, size:9 });
-  text([property.phone, property.email].filter(Boolean).join(' · '), margin, 104, { color: gray, size:9 });
+  const phoneDigits = (property.phone || '').replace(/\D/g, '');
+  const whatsappDigits = (property.whatsapp || '').replace(/\D/g, '');
+  const samePhone = phoneDigits && whatsappDigits && (phoneDigits === whatsappDigits || whatsappDigits.endsWith(phoneDigits) || phoneDigits.endsWith(whatsappDigits));
+  const phoneLabel = samePhone
+    ? `Telefone / WhatsApp: ${property.phone}`
+    : [property.phone ? `Telefone: ${property.phone}` : '', property.whatsapp ? `WhatsApp: ${property.whatsapp}` : ''].filter(Boolean).join(' · ');
+  text([phoneLabel, property.email].filter(Boolean).join(' · '), margin, 104, { color: gray, size:9 });
   horizontal(85);
   text(appendixPages ? `Documentos anexados: ${appendixPages} página${appendixPages === 1 ? '' : 's'} a seguir.`
     : 'Nenhum documento anexado.', margin, 62, { color: gray, size: 9.5 });
