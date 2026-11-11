@@ -1,4 +1,5 @@
 import './demo.js';
+import {paymentLabel} from './reservation-utils.js';
 import { logoutAccount, refreshAccount } from './account.js';
 
 const admin = document.querySelector('#admin-content');
@@ -73,6 +74,11 @@ if (admin) {
         <div class="admin-editor-footer"><p id="admin-editor-status" class="status" role="status"></p><div class="admin-dialog-buttons"><button type="button" class="admin-secondary" data-close-room>Fechar</button><button type="submit">Salvar quarto</button></div></div>
       </form>
     </dialog>
+    <dialog id="admin-review-dialog" aria-labelledby="admin-review-title">
+      <div class="admin-modal-heading"><h2 id="admin-review-title">Verificar dados da reserva</h2><form method="dialog"><button class="admin-close" aria-label="Fechar conferência da reserva">×</button></form></div>
+      <p id="admin-review-status" class="status" role="status"></p><div id="admin-review-content"></div>
+      <div class="admin-dialog-buttons"><button type="button" class="admin-secondary" id="admin-review-close">Fechar</button><button type="button" id="admin-review-confirm" hidden>Confirmar reserva após conferência</button></div>
+    </dialog>
     <dialog id="admin-receipt-dialog" aria-labelledby="admin-receipt-title">
       <div class="admin-modal-heading"><h2 id="admin-receipt-title">Comprovante da reserva e compra</h2><form method="dialog"><button class="admin-close" aria-label="Fechar comprovante">×</button></form></div>
       <p id="admin-receipt-code" class="admin-document-code"></p><p id="admin-receipt-status" class="status" role="status"></p>
@@ -98,6 +104,7 @@ if (admin) {
   const cancelDialog = find('#admin-cancel-dialog');
   const confirmCancel = find('#admin-confirm-cancel');
   const receiptDialog = find('#admin-receipt-dialog');
+  const reviewDialog=find('#admin-review-dialog');let reviewCode;let reviewRevision=0;
   const receiptStatus = find('#admin-receipt-status');
   const receiptFields = find('#admin-receipt-fields');
   const paymentForm = find('#admin-payment-form');
@@ -354,6 +361,27 @@ if (admin) {
     if (reservation.approval === 'pending') return ['pending', 'Aguardando verificação'];
     return reservation.checkedIn ? ['checkedin', 'Check-in registrado'] : ['confirmed', 'Confirmada'];
   }
+  async function openReview(code){
+    const version=++reviewRevision;reviewCode=code;find('#admin-review-status').textContent='Carregando os dados…';find('#admin-review-content').replaceChildren();find('#admin-review-confirm').hidden=true;reviewDialog.showModal();
+    try{
+      const response=await fetch('/api/reservation/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});const result=await response.json();if(!response.ok)throw new Error(result.error);
+      if(version!==reviewRevision||!administrator||!reviewDialog.open)return;
+      const {reservation,customer,notifications,emailMode}=result;const offer=reservation.offer;const body=find('#admin-review-content');
+      const facts=element('dl',undefined,'lines');
+      for(const[label,value]of [['Código',code],['Cliente',customer?.fullName||'Cadastro indisponível'],['E-mail',customer?.email||'Não informado'],['Telefone',customer?.phone||'Não informado'],['Quarto',offer.name],['Período',dates.format(new Date(offer.arrival))+' a '+dates.format(new Date(offer.departure))],['Hóspedes',String(offer.adults+offer.children)],['Plano',offer.planName||'Hospedagem'],['Total',price(offer.total)],['Pagamento escolhido',paymentLabel(reservation.paymentMethod)],['Pagamento','A escolha não comprova quitação']])facts.append(element('dt',label),element('dd',value));body.append(facts);
+      const contacts=element('div',undefined,'admin-row-actions');
+      if(customer?.email){const link=element('a','Enviar e-mail ao cliente','button admin-secondary');link.href='mailto:'+customer.email;contacts.append(link);}
+      if(customer?.phone){const link=element('a','Ligar para o cliente','button admin-secondary');link.href='tel:'+customer.phone.replace(/[^+0-9]/g,'');contacts.append(link);}body.append(contacts);
+      body.append(element('h3','Comunicação da reserva'),element('p',emailMode==='gmail'?'Envio pelo Gmail configurado. Confira o status de cada mensagem.':'Prévia de teste. Os e-mails abaixo não foram enviados.'));
+      const labels={preview:'Prévia — não enviado',queued:'Na fila de envio',sending:'Envio em andamento',sent:'Enviado pelo provedor',failed:'Falha no envio',uncertain:'Envio não confirmado — conferir caixa de saída'};
+      for(const message of notifications||[]){const details=element('details');details.append(element('summary',(message.kind==='confirmed'?'Aprovação':'Recebimento da solicitação')+' · '+(labels[message.status]||message.status)),element('p','Destinatário: '+message.recipient),element('h4',message.subject),element('pre',message.body,'email-preview'));if(message.error)details.append(element('p',message.error,'status'));body.append(details);}
+      body.append(element('p','WhatsApp automático ainda não conectado à API. O telefone acima permite contato com o cliente.','muted'));
+      find('#admin-review-confirm').hidden=reservation.cancelled||reservation.approval!=='pending'||offer.departure<=new Date().toLocaleDateString('sv-SE',{timeZone:'America/Sao_Paulo'});find('#admin-review-status').textContent='Confira os dados antes de aprovar a hospedagem.';
+    }catch(error){if(version===reviewRevision)find('#admin-review-status').textContent=error.message;}
+  }
+  find('#admin-review-close').onclick=()=>reviewDialog.close();
+  reviewDialog.addEventListener('close',()=>{reviewRevision++;reviewCode=undefined;find('#admin-review-content').replaceChildren();});
+  find('#admin-review-confirm').onclick=event=>action(event.currentTarget,async()=>{const code=reviewCode;if(!code)return;await request({confirmReservation:code});reviewDialog.close();renderAll();status.textContent='Reserva confirmada. Confira a comunicação em Verificar dados.';document.dispatchEvent(new Event('catalog-updated'));},find('#admin-review-status'));
   function matchesReservation(reservation, query) { return normalize(reservation.code + ' ' + reservation.offer.name).includes(query); }
   function renderReservations() {
     const list = find('#admin-reservation-list');
@@ -375,7 +403,8 @@ if (admin) {
         const [key, label] = reservationState(reservation); cell(row, element('span', label, 'admin-pill' + (key === 'cancelled' || key === 'ended' ? ' admin-pill-muted' : '')));
         const actions = element('div', undefined, 'admin-row-actions');
         if (!reservation.cancelled) actions.append(button('Comprovante', event => openReceipt(event.currentTarget, code)));
-        if (key === 'pending') actions.append(button('Confirmar reserva', event => action(event.currentTarget, async () => { await request({ confirmReservation: code }); renderAll(); status.textContent = 'Reserva confirmada. Envio por e-mail previsto na versão final.'; document.dispatchEvent(new Event('catalog-updated')); })));
+        actions.append(button('Verificar dados',()=>openReview(code)));
+        if(key==='pending')actions.append(button('Confirmar reserva',()=>openReview(code)));
         if (['confirmed','pending'].includes(key)) actions.append(button('Cancelar', () => {
           pendingCancel = code; find('#admin-cancel-note').textContent = offer.name + ' · ' + dates.format(new Date(offer.arrival)) + ' a ' + dates.format(new Date(offer.departure)) + '. O quarto voltará a ficar disponível.'; cancelDialog.showModal();
         }, 'admin-danger-link'));
@@ -496,7 +525,7 @@ if (admin) {
     if (administrator) { access.hidden = true; loadDashboard(); }
     else {
       dashboardVersion++;
-      for (const dialog of [roomDialog, receiptDialog, cancelDialog, find('#admin-delete-room-dialog')]) if (dialog.open) dialog.close();
+      for (const dialog of [reviewDialog, roomDialog, receiptDialog, cancelDialog, find('#admin-delete-room-dialog')]) if (dialog.open) dialog.close();
       data = { rooms: [], reservations: [], images: [] };
       for (const id of ['#admin-room-list', '#admin-rate-list', '#admin-reservation-list', '#admin-receipt-list']) find(id).replaceChildren();
       editor.reset(); dashboard.hidden = true; access.hidden = false; status.textContent = ''; loadStatus.textContent = ''; currentView = 'rooms';

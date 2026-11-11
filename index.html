@@ -26,7 +26,6 @@
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></symbol>
   <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 19V9m18 10v-5a2 2 0 0 0-2-2H3m0 5h18M6 12V9h5v3m2 0V9h5v3"/></symbol>
 </svg>
-<div class="site-strip"><div class="wrap"><span>Cachoeira Paulista · SP</span><span>Em frente à Canção Nova</span></div></div>
 <header class="site-header">
   <div class="wrap header-row">
     <a class="brand" href="#inicio" aria-label="Pousada Santa Terezinha, início">
@@ -49,7 +48,7 @@
     </div>
   </div>
 </header>
-<aside class="prototype-notice"><div class="wrap"><strong>MODELO DE TESTE</strong><span>Direitos do site: © 2026 Gustavo Henrique De Inocencio Ribeiro. Demonstração local nesta aba. Use dados fictícios. Perfis de teste livres; sem autenticação, reservas, pagamentos ou e-mails reais.</span></div></aside>
+
 <main>
   <section id="inicio" data-page hidden>
     <div class="hero">
@@ -322,8 +321,8 @@
     <p class="breadcrumb"><a id="checkout-back" href="#acomodacoes">Voltar ao quarto</a><span aria-hidden="true">›</span>Revisão</p>
     <h1>Revise sua reserva</h1>
     <div class="checkout-layout">
-      <article class="surface"><h2>Detalhes da hospedagem</h2><div id="checkout-lines"></div></article>
-      <form id="confirm-form" class="surface summary"><h2>Sua compra</h2><div id="checkout-price"></div><p class="muted">Reserva de demonstração. Nenhum pagamento será solicitado.</p><button>Enviar reserva para verificação</button><p id="confirm-status" class="status" role="status"></p></form>
+      <article class="surface"><h2>Detalhes da hospedagem</h2><div id="checkout-lines"></div><h3>Seus dados para contato</h3><div id="checkout-customer"></div><a href="#conta" id="checkout-edit-customer">Editar meus dados</a></article>
+      <form id="confirm-form" class="surface summary"><h2>Sua compra</h2><div id="checkout-price"></div><label class="checkout-payment">Como você prefere pagar?<select id="checkout-payment" name="paymentMethod" required><option value="">Selecione a forma de pagamento</option></select></label><p class="muted">Sua solicitação será analisada pela pousada. Escolher a forma de pagamento não realiza cobrança nem confirma quitação.</p><button>Enviar reserva para verificação</button><p id="confirm-status" class="status" role="status"></p></form>
     </div>
   </section>
 
@@ -375,7 +374,7 @@
     <div id="admin-content"></div>
   </section>
 </main>
-<footer class="site-footer"><div class="wrap"><div><img class="footer-property-logo" data-property-logo alt="" hidden><strong data-property-name>Pousada Santa Terezinha do Menino Jesus</strong><p>© 2026 Gustavo Henrique De Inocencio Ribeiro · Desenvolvimento do site. Todos os direitos reservados.</p><p>Protótipo para avaliação. Imagens ilustrativas conforme os créditos. Não é comprovante fiscal.</p><div id="property-public-contacts"></div></div><div><a href="#restaurante" data-property-nav="restaurant">Restaurante</a><a href="#conta">Minha conta</a><a href="#localizacao" data-property-nav="location">Localização</a><a href="#admin" data-admin-link hidden>Administração</a><a href="#privacidade">Privacidade</a><button type="button" class="text-button" data-cookie-settings>Cookies</button></div></div></footer>
+
 <aside id="cookie-notice" class="cookie-notice" aria-labelledby="cookie-title" hidden>
   <div class="wrap cookie-content">
     <button type="button" class="cookie-dismiss" id="close-cookie-notice" aria-label="Fechar preferências de cookies">×</button>

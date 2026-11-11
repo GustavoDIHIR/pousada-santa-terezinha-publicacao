@@ -17,9 +17,9 @@ function applyProperty(data) {
  document.querySelectorAll('a[href^="https://www.google.com/maps/dir/"]').forEach(link=>link.href='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent([data.address,data.city].filter(Boolean).join(', ')));
  const map=document.querySelector('.location-map iframe');const source='https://www.google.com/maps?q='+encodeURIComponent([data.address,data.city].filter(Boolean).join(', '))+'&output=embed';
  if(map.dataset.src!==source){map.removeAttribute('src');map.dataset.src=source;}
- const contacts=document.querySelector('#property-public-contacts');contacts.replaceChildren();
- for(const[label,key,prefix]of[['Instagram','instagram',''],['Facebook','facebook',''],['Telefone','phone','tel:'],['E-mail','email','mailto:'],['WhatsApp','whatsapp','https://wa.me/']]){if(!data[key])continue;const link=element('a',label);let value=data[key];if(key==='whatsapp'){value=value.replace(/\D/g,'');if([10,11].includes(value.length))value='55'+value;}link.href=prefix+value;contacts.append(link);}
- if(data.paymentMethods)contacts.append(element('span','Formas de pagamento: '+data.paymentMethods));
+ const contacts=document.querySelector('#property-public-contacts');contacts?.replaceChildren();
+ for(const[label,key,prefix]of[['Instagram','instagram',''],['Facebook','facebook',''],['Telefone','phone','tel:'],['E-mail','email','mailto:'],['WhatsApp','whatsapp','https://wa.me/']]){if(!data[key])continue;const link=element('a',label);let value=data[key];if(key==='whatsapp'){value=value.replace(/\D/g,'');if([10,11].includes(value.length))value='55'+value;}link.href=prefix+value;contacts?.append(link);}
+ if(data.paymentMethods)contacts?.append(element('span','Formas de pagamento: '+data.paymentMethods));
  document.dispatchEvent(new CustomEvent('property-updated',{detail:data}));
 }
 
@@ -123,5 +123,5 @@ demoButton.onclick=()=>{
   }
 };
 async function refresh(){try{const {user}=await post('account/session');managersButton.hidden=!(user?.role==='admin'&&user.isManager);if(user){const result=await post('property');applyProperty(result.property);}}catch{}}
-document.addEventListener('account-session',event=>{managersButton.hidden=!(event.detail?.role==='admin'&&event.detail.isManager);if(event.detail)refresh();else{managerRevision++;selectedAdministrator=undefined;managerDialog.close();panel.hidden=true;panel.replaceChildren();resetDialog.close();document.querySelector('#property-public-contacts').replaceChildren();}});
+document.addEventListener('account-session',event=>{managersButton.hidden=!(event.detail?.role==='admin'&&event.detail.isManager);if(event.detail)refresh();else{managerRevision++;selectedAdministrator=undefined;managerDialog.close();panel.hidden=true;panel.replaceChildren();resetDialog.close();document.querySelector('#property-public-contacts')?.replaceChildren();}});
 refresh();

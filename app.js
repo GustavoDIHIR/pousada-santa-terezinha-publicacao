@@ -1,4 +1,5 @@
 import './demo.js';
+import {paymentOptions,paymentLabel} from './reservation-utils.js';
 import { downloadReceipt, openAccountPanel, openAccountReservation, refreshAccount } from './account.js';
 
 const $ = selector => document.querySelector(selector);
@@ -9,6 +10,9 @@ const weekdayDate = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full', timeZo
 const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' });
 const day = 86400000;
 const criteria = { arrival: '', departure: '', adults: 2, children: 0 };
+let checkoutUser;
+for(const option of paymentOptions){const item=document.createElement('option');item.value=option.id;item.textContent=option.label;document.querySelector('#checkout-payment').append(item);}
+document.querySelector('#checkout-edit-customer').onclick=()=>setTimeout(()=>openAccountPanel('dados'),0);
 let catalog = [];
 let catalogReady = false;
 let catalogError = "";
@@ -123,7 +127,8 @@ function showPage() {
   }
   const roomId = detailId();
   const section = document.getElementById(hash);
-  const page = roomId ? 'quarto' :
+  const reservationLink=location.hash.match(/^#reserva\/([A-Fa-f0-9]{18})$/);
+  const page = reservationLink?'conta':roomId ? 'quarto' :
     ['quarto', 'quartos', 'reserva', 'privativos', 'compartilhados'].includes(hash) ? 'acomodacoes' :
     section?.closest('[data-page]')?.id || 'inicio';
   if (!siteUser && !['conta', 'privacidade'].includes(page)) {
@@ -152,6 +157,7 @@ function showPage() {
     else link.removeAttribute('aria-current');
   }
   if (page === 'checkout') renderCheckout();
+  if(reservationLink&&clientSignedIn)openAccountReservation(reservationLink[1].toUpperCase());
   if (page === 'conta') {
     if (siteUser === undefined || siteUser) refreshAccount();
   }
@@ -723,6 +729,7 @@ async function findRooms(room) {
 
 function renderCheckout() {
   $('#checkout-back').href = '#quarto/' + selected.room;
+  $('#checkout-customer').replaceChildren(lines([['Nome',checkoutUser?.fullName||'Complete em Meus dados'],['E-mail',checkoutUser?.email||''],['Telefone',checkoutUser?.phone||'Complete em Meus dados']]));
   $('#checkout-lines').replaceChildren(lines([...stayLines(selected), ['Suíte', selected.name],
     ['Plano', selected.planName || 'Hospedagem'], ['Condições', 'Conforme o plano selecionado']]));
   $('#checkout-price').replaceChildren(lines([
@@ -738,7 +745,7 @@ let accountIdentity;
 let clientSignedIn = false;
 let reservationViewVersion = 0;
 document.addEventListener('account-session', event => {
-  const user = event.detail;
+  const user = event.detail;checkoutUser=user;
   clientSignedIn = user?.role === 'client';
   $('#account-menu').setAttribute('aria-label', user ? 'Minha conta' : 'Minha conta: entrar ou criar conta');
   for (const link of document.querySelectorAll('[data-admin-link]')) link.hidden = user?.role !== 'admin';
@@ -786,11 +793,11 @@ document.addEventListener('account-code-lookup', event => {
   });
 });
 
-function renderReservation({ code, checkedIn, cancelled, accountBound, approval, offer }, panel = $('#account-code-output'), status = $('#account-code-status')) {
+function renderReservation({ code, checkedIn, cancelled, accountBound, approval, offer,paymentMethod }, panel = $('#account-code-output'), status = $('#account-code-status')) {
   panel.replaceChildren(node('h3', cancelled ? 'Reserva cancelada' : checkedIn ? 'Check-in registrado' : approval === 'pending' ? 'Reserva enviada para verificação' : 'Reserva confirmada'),
     node('p', 'Guarde este código para consultar a reserva:', 'muted'), node('code', code, 'voucher'),
     lines([...stayLines(offer), ['Suíte', offer.name], ['Tarifa', offer.planName || (offer.breakfast ? 'Com café da manhã' : 'Sem café da manhã')],
-      ['Total simulado', cash(offer.total)]]));
+      ['Total simulado', cash(offer.total)],['Pagamento escolhido',paymentLabel(paymentMethod)],['Situação do pagamento','Não cobrado neste protótipo']]));
   if (!checkedIn && !cancelled && approval !== 'pending') {
     const button = node('button', 'Registrar check-in online');
     button.type = 'button';
@@ -815,7 +822,8 @@ $('#confirm-form').onsubmit = event => {
   event.preventDefault();
   if (!selected) return;
   run(event.submitter, $('#confirm-status'), async () => {
-    const booking = await api('book', { ...criteria, key: selected.key });
+    const paymentMethod=$('#checkout-payment').value;if(!paymentMethod)throw new Error('Selecione a forma de pagamento.');
+    const booking = await api('book', { ...criteria, key: selected.key,paymentMethod });
     updateCriteria();
     $('#account-code-lookup').elements.code.value = booking.code;
     $('#account-code-status').textContent = '';

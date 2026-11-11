@@ -1,3 +1,4 @@
+import {paymentOptions,reservationEmail} from './reservation-utils.js';
 // Exclusivo do protótipo estático: simulação local, sem autenticação ou agenda reais.
 import { seedRooms, seedProperty } from './demo-seed.js';
 const storageKey = 'pousada-prototipo-v1:' + location.pathname;
@@ -91,7 +92,7 @@ async function accountAction(action,input){
 async function receiptAction(input,editing){
  if(editing)requireAdmin();const booking=bookingFor(input.code);
  const paymentLabels={'':'Não registrado',pix:'Pix',credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Transferência bancária'};
- const saved=state.receipts[booking.code]||{paymentMethod:'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
+ const saved=state.receipts[booking.code]||{paymentMethod:booking.paymentMethod||'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
  const receipt=await import('./receipt.js');
  if(editing&&(input.save||input.preview)){
   if(!Object.hasOwn(paymentLabels,method)||!Array.isArray(input.documents)||input.documents.length>3)fail('Revise pagamento e anexos.');
@@ -121,10 +122,11 @@ async function handle(path,input){
   return {rooms,...(room&&{availability:{availableBeds:availableBeds(room,input.arrival,input.departure),capacity:room.capacity}})};
  }
  if(path==='book'){
+  if(!paymentOptions.some(option=>option.id===input.paymentMethod))fail('Escolha a forma de pagamento antes de enviar a reserva para análise.');
   const account=requireUser();if(account.role!=='client')fail('Use o perfil Cliente para testar uma reserva.',403);
   const offer=offers(input).flatMap(room=>room.options).find(offer=>offer.key===input.key);
   if(!offer)fail('A disponibilidade ou a tarifa mudou. Pesquise novamente.',409);
-  const booking={approval:'pending',code:id(),checkedIn:false,cancelled:false,ownerRef:account.id,accountBound:true,purchaseNumber:id(12),confirmedAt:null,checkInNumber:null,checkedInAt:null,offer};
+  const booking={approval:'pending',code:id(),checkedIn:false,cancelled:false,ownerRef:account.id,accountBound:true,purchaseNumber:id(12),paymentMethod:input.paymentMethod,createdAt:new Date().toISOString(),confirmedAt:null,checkInNumber:null,checkedInAt:null,offer};
   state.reservations.unshift(booking);return booking;
  }
  if(path==='reservation'||path==='checkin'){
@@ -134,6 +136,11 @@ async function handle(path,input){
    if(!booking.checkedIn){booking.checkedIn=true;booking.checkInNumber=id();booking.checkedInAt=new Date().toISOString();}
   }
   return booking;
+ }
+ if(path==='reservation/review'){
+  requireAdmin();const reservation=bookingFor(input.code);const owner=state.accounts.find(account=>account.id===reservation.ownerRef);const customer=owner?{fullName:owner.fullName,email:owner.email,phone:owner.phone}:null;
+  const notifications=customer?['submitted',...(reservation.approval==='confirmed'?['confirmed']:[])].map(kind=>({...reservationEmail({reservation,propertyName:state.property.name,type:kind,baseUrl:new URL('./',location.href).href}),kind,recipient:customer.email,status:'preview'})):[];
+  return {reservation,customer,notifications,emailMode:'preview',whatsappConfigured:false};
  }
  if(path==='receipt'||path==='receipt/admin')return receiptAction(input,path.endsWith('/admin'));
  if(path==='property'){
@@ -203,7 +210,7 @@ window.fetch=(resource,options={})=>{
 };
 function demoControls(){
  const bar=document.createElement('aside');bar.className='demo-controls';bar.setAttribute('aria-label','Controles do protótipo');
- const note=document.createElement('span');note.textContent='PROTÓTIPO · Dados fictícios nesta aba · Sem reservas reais';bar.append(note);
+ const note=document.createElement('span');note.textContent='PROTÓTIPO · Dados fictícios nesta aba · Sem reservas reais · Direitos do site: © 2026 Gustavo Henrique De Inocencio Ribeiro.';bar.append(note);
  for(const[label,email,hash]of [['Cliente','cliente@example.test','#inicio'],['Administrador','admin@example.test','#admin'],['Gestor','gestor@example.test','#admin']]){
   const button=document.createElement('button');button.type='button';button.textContent='Testar como '+label;
   button.onclick=async()=>{const result=await window.fetch('/api/account/login',{method:'POST',body:JSON.stringify({email,password:'Demonstracao123!'})});if(!result.ok){alert((await result.json()).error);return;}location.hash=hash;location.reload();};bar.append(button);
