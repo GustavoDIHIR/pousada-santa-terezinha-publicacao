@@ -1,0 +1,48 @@
+.account-access{max-width:560px}
+.account-access .surface{padding:clamp(1rem,3vw,1.75rem)}
+#account-content form{display:grid;gap:.85rem;margin-top:1rem}
+#account-content form label{display:grid;gap:.3rem;font-size:.9rem;font-weight:800}
+#account-content form input{min-width:0;width:100%;min-height:44px;padding:.55rem .7rem;border:1px solid var(--line);background:#f9fbfe;color:var(--ink)}
+#account-content form button{justify-self:start}
+.account-link{background:transparent;color:var(--blue-hover);padding:.55rem 0;text-align:left;text-decoration:underline;text-underline-offset:.2em}
+.account-link:hover{background:transparent;color:var(--navy)}
+.account-delete{margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--line)}
+.account-delete summary{cursor:pointer;font-weight:800}
+.account-delete summary+p{margin-top:.65rem}
+.account-heading,.account-reservation{display:flex;justify-content:space-between;align-items:flex-start;gap:.85rem}
+.account-heading p{margin-top:.4rem;color:var(--muted);overflow-wrap:anywhere}
+.account-secondary{color:var(--navy);background:white;border:1px solid var(--line)}
+.account-secondary:hover{color:var(--navy);background:var(--soft)}
+.account-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.4rem;margin-top:1.25rem;padding:.75rem 0;border-block:1px solid var(--line);font-weight:800}
+.account-admin .account-nav{border-bottom:0;padding-bottom:0}
+.account-section{margin-top:1.65rem;scroll-margin-top:1rem}
+.account-section>p{margin:.45rem 0 .8rem}
+.account-empty{padding:1rem 0}
+.account-reservation{padding:1rem 0;border-bottom:1px solid var(--line)}
+.account-reservation h4{margin:0;font-size:1rem}
+.account-reservation p,.account-reservation code{display:block;margin-top:.25rem}
+.account-reservation-actions{display:grid;justify-items:end;gap:.45rem}
+.account-danger{background:#a52b38}
+.account-danger:hover{background:#821f2a}
+@media(max-width:700px){
+  .account-heading,.account-reservation{flex-wrap:wrap}
+  .account-reservation-actions{display:flex;flex-wrap:wrap;align-items:center}
+}
+
+.account-client-nav{gap:.35rem 1rem}
+.account-client-nav button{padding:.5rem 0;background:transparent;color:var(--ink);border-bottom:2px solid transparent;font-size:.9rem}
+.account-client-nav button:hover,.account-client-nav button[aria-current]{color:var(--blue-hover);border-color:var(--blue)}
+.account-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;margin-top:1.2rem}
+.account-overview article{padding-top:.8rem;border-top:1px solid var(--line);min-width:0}
+.account-overview h4{margin:0;font-size:1rem}
+.account-overview p{margin:.45rem 0;color:var(--muted);overflow-wrap:anywhere}
+#account-profile-form{max-width:550px}
+#account-profile-status{margin-bottom:.75rem}
+#account-code-lookup{max-width:540px;grid-template-columns:minmax(0,1fr) auto;align-items:end}
+#account-code-output:not(:empty){margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line)}
+@media(max-width:700px){
+  .account-overview{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  #account-code-lookup{grid-template-columns:1fr}
+}
