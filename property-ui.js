@@ -1,4 +1,4 @@
-import './demo.js?v=935aa02d';
+import './demo.js?v=4bdedf93';
 const labels = {name:'Nome de apresentação',legalName:'Razão social',taxId:'CNPJ / identificação',address:'Endereço',city:'Cidade e estado',phone:'Telefone',whatsapp:'WhatsApp com DDD',email:'E-mail de contato',instagram:'Instagram (link HTTPS)',facebook:'Facebook (link HTTPS)',paymentMethods:'Formas de pagamento',paymentInstructions:'Orientações sobre pagamento',checkInTime:'Horário de check-in (HH:MM)',checkOutTime:'Horário de check-out (HH:MM)'};
 let currentProperty;
 async function post(path,data={}) {
@@ -115,14 +115,14 @@ whatsappDialog.innerHTML=`
   <div class="admin-modal-heading" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem">
     <div>
       <strong>Bot WhatsApp · Pousada Santa Terezinha</strong>
-      <div class="muted" style="font-size:.82rem">Número de teste ativo: +55 12 99188-4876 · Menu de 1 a 10</div>
+      <div class="muted" style="font-size:.82rem">Número de teste ativo: +55 12 99188-4876 · Menu principal (1 a 4) com submenus</div>
     </div>
     <button type="button" id="whatsapp-bot-close" class="account-secondary" style="min-height:36px;padding:.25rem .75rem">Fechar</button>
   </div>
   <div id="whatsapp-bot-log" style="background:#eef4f8;border:1px solid #cbd5e1;border-radius:8px;padding:.75rem;height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;font-size:.9rem;white-space:pre-wrap"></div>
   <div id="whatsapp-bot-quick" style="display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0"></div>
   <form id="whatsapp-bot-form" style="display:flex;gap:.5rem;align-items:center">
-    <input id="whatsapp-bot-input" type="text" placeholder="Digite uma opção de 1 a 10, datas ou código..." style="flex:1" autocomplete="off">
+    <input id="whatsapp-bot-input" type="text" placeholder="Escolha uma opção (1 a 4) ou digite aqui..." style="flex:1" autocomplete="off">
     <button type="submit" style="min-height:42px;padding:0 1rem">Enviar</button>
   </form>
 `;
@@ -136,19 +136,35 @@ function appendBotBubble(text,fromUser=false){
   item.style.cssText=`align-self:${fromUser?'flex-end':'flex-start'};max-width:88%;padding:.55rem .75rem;border-radius:8px;background:${fromUser?'#142e4c':'#ffffff'};color:${fromUser?'#ffffff':'#0f172a'};border:1px solid ${fromUser?'#142e4c':'#cbd5e1'}`;
   botLog.append(item);botLog.scrollTop=botLog.scrollHeight;
 }
+const stepButtons={
+  menu:[['1','1 · Reservar'],['2','2 · Minha reserva'],['3','3 · Informações'],['4','4 · Falar com a pousada']],
+  reservation_menu:[['1','1 · Consultar pelo código'],['2','2 · Check-in e comprovante'],['3','3 · Pagamento'],['4','4 · Alterar/Cancelar'],['0','0 · Voltar ao menu']],
+  info_menu:[['1','1 · Tarifas e quartos'],['2','2 · Café e Restaurante'],['3','3 · Comodidades'],['4','4 · Localização'],['0','0 · Voltar ao menu']],
+  type:[['1','1 · Privativa'],['2','2 · Compartilhada'],['3','3 · Qualquer tipo'],['0','0 · Menu']],
+  offer:[['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['0','0 · Menu']],
+  payment:[['1','1 · Pix'],['2','2 · Crédito'],['3','3 · Débito'],['4','4 · Dinheiro'],['5','5 · Transferência'],['0','0 · Menu']],
+  confirm:[['1','1 · Confirmar pedido'],['2','2 · Cancelar'],['0','0 · Menu']],
+  human:[['0','0 · Voltar ao menu automático']],
+  default:[['0','0 · Voltar ao menu principal']],
+};
+function renderBotQuick(step='menu'){
+  botQuick.replaceChildren();
+  for(const [val,label] of stepButtons[step]||stepButtons.default){
+    const btn=element('button',label,'account-secondary');
+    btn.type='button';btn.style.cssText='min-height:32px;padding:.15rem .55rem;font-size:.82rem';
+    btn.onclick=()=>sendBotText(val,true);
+    botQuick.append(btn);
+  }
+}
 async function sendBotText(text,showUser=true){
   if(showUser)appendBotBubble(text,true);
   try{
     const res=await post('whatsapp/test',{from:'5512991884876',text});
     appendBotBubble(res.reply,false);
+    renderBotQuick(res.step||'menu');
   }catch(err){appendBotBubble(err.message||'Erro ao comunicar com o bot.',false);}
 }
-for(const opt of ['0','1','2','3','4','5','6','7','8','9','10']){
-  const btn=element('button',opt==='0'?'0 · Menu':opt,'account-secondary');
-  btn.type='button';btn.style.cssText='min-height:32px;padding:.15rem .55rem;font-size:.82rem';
-  btn.onclick=()=>sendBotText(opt,true);
-  botQuick.append(btn);
-}
+renderBotQuick('menu');
 whatsappDialog.querySelector('#whatsapp-bot-form').onsubmit=event=>{
   event.preventDefault();const val=botInput.value.trim();if(!val)return;botInput.value='';sendBotText(val,true);
 };

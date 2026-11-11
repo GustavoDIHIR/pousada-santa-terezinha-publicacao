@@ -20,74 +20,98 @@ export function reservationEmail({reservation,propertyName,type,baseUrl}){
 }
 export function whatsappBotMenu(name='Pousada Santa Terezinha do Menino Jesus'){
  return [
-  `Olá! Bem-vindo(a) ao atendimento automático da ${name}.`,
-  'Escolha uma opção digitando o número de 1 a 10:',
+  `Olá! Bem-vindo(a) à ${name}.`,
+  'Escolha uma opção (1 a 4):',
   '',
   '1 - Reservar acomodação',
-  '2 - Consultar minha reserva',
-  '3 - Tarifas, planos e tipos de quartos',
-  '4 - Horários de check-in e check-out',
-  '5 - Café da manhã e Restaurante',
-  '6 - Localização e distância da Canção Nova',
-  '7 - Formas de pagamento aceitas',
-  '8 - Comodidades, Wi-Fi e estrutura',
-  '9 - Alteração e cancelamento de reserva',
-  '10 - Falar com um atendente da pousada',
-  '',
-  'Digite 0 a qualquer momento para voltar a este menu.',
+  '2 - Minha reserva (consultar, check-in ou alterar)',
+  '3 - Informações da pousada (tarifas, estrutura e local)',
+  '4 - Falar com a pousada',
  ].join('\n');
 }
-export function whatsappFaqAnswer(optionNumber,{propertyName='Pousada Santa Terezinha do Menino Jesus',checkInTime='14:00',checkOutTime='12:00',baseUrl='https://gustavodihir.github.io/pousada-santa-terezinha-publicacao/'}={}){
- const site=new URL(baseUrl);
- const footer='\n\nDigite 1 para reservar, outro número (1 a 10) ou 0 para ver o menu.';
- switch(optionNumber){
-  case 3:
-   return [
-    `📋 Tarifas, planos e tipos de quartos — ${propertyName}`,
-    '• Quartos Privativos (valor por quarto/diária): Suíte Individual, Suíte Casal, Quarto Triplo e Quarto Família (a partir de R$ 180,00/diária).',
-    '• Quartos Compartilhados (valor por vaga/hóspede/diária): Acomodações de 4, 6, 8 e 12 vagas em beliches (a partir de R$ 75,00 por vaga/diária).',
-    '• Você pode escolher planos com ou sem café da manhã conforme disponibilidade do quarto.',
-   ].join('\n')+footer;
-  case 4:
-   return [
-    `🕒 Horários de Check-in e Check-out — ${propertyName}`,
-    `• Check-in (entrada): a partir das ${checkInTime || '14:00'}.`,
-    `• Check-out (saída): até as ${checkOutTime || '12:00'}.`,
-    '• Após a aprovação da sua reserva pela pousada, você pode registrar o check-in diretamente em Minha conta no site.',
-   ].join('\n')+footer;
-  case 5:
-   return [
-    `☕ Café da manhã e Restaurante — ${propertyName}`,
-    '• Contamos com restaurante próprio na pousada, com salão amplo, buffet variado, saladas e acompanhamentos.',
-    '• No momento da reserva você pode selecionar a tarifa com café da manhã incluso quando disponível no plano da acomodação.',
-   ].join('\n')+footer;
-  case 6:
-   return [
-    `📍 Localização — ${propertyName}`,
-    '• Estamos localizados em Cachoeira Paulista – SP, em frente ao Santuário da Canção Nova (acesso fácil a pé em poucos minutos).',
-    `• Veja o endereço completo e o mapa no site: ${new URL('#localizacao',site).href}`,
-   ].join('\n')+footer;
-  case 7:
-   return [
-    `💳 Formas de Pagamento — ${propertyName}`,
-    '• Aceitamos: Pix, Cartão de crédito, Cartão de débito, Dinheiro na pousada e Transferência bancária.',
-    '• Ao solicitar a reserva você informa a modalidade desejada para análise da pousada.',
-    '• Segurança: nunca envie número de cartão ou senhas por mensagens no WhatsApp.',
-   ].join('\n')+footer;
-  case 8:
-   return [
-    `🛏️ Comodidades e Estrutura — ${propertyName}`,
-    '• Suítes Privativas: Ar-condicionado, Wi-Fi gratuito, TV, frigobar, banheiro privativo, roupa de cama e banho.',
-    '• Quartos Compartilhados: Ar-condicionado, Wi-Fi gratuito, beliches organizados por vaga e banheiro compartilhado.',
-    '• Ambiente familiar, tranquilo e preparado para romeiros, famílias e grupos.',
-   ].join('\n')+footer;
-  case 9:
-   return [
-    `🔄 Alteração e Cancelamento — ${propertyName}`,
-    '• Solicitações em análise ou reservas confirmadas antes do check-in podem ser consultadas em Minha conta no site.',
-    '• Para alterar datas ou cancelar uma reserva já enviada, acesse sua conta pelo link da reserva ou digite 10 para falar diretamente com a equipe da pousada.',
-   ].join('\n')+footer;
-  default:
-   return null;
+export function whatsappSubmenu(group){
+ if(group==='reservation_menu'){
+  return [
+   'Sobre sua reserva, escolha uma opção:',
+   '1 - Consultar status pelo código da reserva',
+   '2 - Horários de check-in, check-out e comprovante',
+   '3 - Formas de pagamento e confirmação',
+   '4 - Alteração ou cancelamento de reserva',
+   '0 - Voltar ao menu principal',
+  ].join('\n');
  }
+ if(group==='info_menu'){
+  return [
+   'O que você gostaria de saber sobre a pousada?',
+   '1 - Tarifas, planos e tipos de quartos',
+   '2 - Café da manhã e Restaurante',
+   '3 - Comodidades, Wi-Fi e estrutura',
+   '4 - Localização e distância da Canção Nova',
+   '0 - Voltar ao menu principal',
+  ].join('\n');
+ }
+ return whatsappBotMenu();
+}
+export function whatsappSubmenuAnswer(group,optionNumber,{propertyName='Pousada Santa Terezinha do Menino Jesus',checkInTime='14:00',checkOutTime='12:00',baseUrl='https://gustavodihir.github.io/pousada-santa-terezinha-publicacao/'}={}){
+ const site=new URL(baseUrl);
+ if(group==='reservation_menu'){
+  const footer='\n\nEscolha outra opção de Minha reserva (1 a 4) ou digite 0 para o menu principal.';
+  switch(optionNumber){
+   case 2:
+    return [
+     `🕒 Check-in, Check-out e Comprovante — ${propertyName}`,
+     `• Check-in (entrada): a partir das ${checkInTime||'14:00'}.`,
+     `• Check-out (saída): até as ${checkOutTime||'12:00'}.`,
+     '• Após a confirmação da reserva pela pousada, acesse Minha conta no site para registrar o check-in e baixar o comprovante em PDF.',
+    ].join('\n')+footer;
+   case 3:
+    return [
+     `💳 Formas de Pagamento — ${propertyName}`,
+     '• Aceitamos: Pix, Cartão de crédito, Cartão de débito, Dinheiro na pousada e Transferência bancária.',
+     '• A modalidade escolhida no pedido passa pela conferência da pousada.',
+     '• Segurança: nunca envie números de cartão ou senhas neste chat.',
+    ].join('\n')+footer;
+   case 4:
+    return [
+     `🔄 Alteração ou Cancelamento — ${propertyName}`,
+     '• Você pode consultar e gerenciar sua reserva em Minha conta no site.',
+     '• Para solicitar alteração de datas ou cancelamento com nossa equipe, volte ao menu (0) e escolha 4 (Falar com a pousada).',
+    ].join('\n')+footer;
+   default:
+    return null;
+  }
+ }
+ if(group==='info_menu'){
+  const footer='\n\nEscolha outra informação (1 a 4) ou digite 0 para o menu principal.';
+  switch(optionNumber){
+   case 1:
+    return [
+     `📋 Tarifas, planos e tipos de quartos — ${propertyName}`,
+     '• Quartos Privativos (valor por quarto/diária): Suíte Individual, Suíte Casal, Quarto Triplo e Quarto Família (a partir de R$ 180,00/diária).',
+     '• Quartos Compartilhados (valor por vaga/diária): Acomodações de 4, 6, 8 e 12 vagas em beliches (a partir de R$ 75,00 por vaga/diária).',
+     '• Planos com ou sem café da manhã conforme a acomodação.',
+    ].join('\n')+footer;
+   case 2:
+    return [
+     `☕ Café da manhã e Restaurante — ${propertyName}`,
+     '• Contamos com restaurante próprio na pousada, com salão amplo, buffet variado, saladas e acompanhamentos.',
+     '• Na reserva você pode escolher tarifas com café da manhã incluso quando disponível.',
+    ].join('\n')+footer;
+   case 3:
+    return [
+     `🛏️ Comodidades e Estrutura — ${propertyName}`,
+     '• Suítes Privativas: Ar-condicionado, Wi-Fi gratuito, TV, frigobar, banheiro privativo, roupa de cama e banho.',
+     '• Quartos Compartilhados: Ar-condicionado, Wi-Fi gratuito, beliches organizados por vaga e banheiro compartilhado.',
+    ].join('\n')+footer;
+   case 4:
+    return [
+     `📍 Localização — ${propertyName}`,
+     '• Cachoeira Paulista – SP, em frente ao Santuário da Canção Nova (acesso a pé em poucos minutos).',
+     `• Mapa e endereço no site: ${new URL('#localizacao',site).href}`,
+    ].join('\n')+footer;
+   default:
+    return null;
+  }
+ }
+ return null;
 }

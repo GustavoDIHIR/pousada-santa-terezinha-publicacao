@@ -1,6 +1,6 @@
-import {paymentOptions,paymentLabel,reservationEmail,whatsappBotMenu,whatsappFaqAnswer} from './reservation-utils.js?v=935aa02d';
+import {paymentOptions,paymentLabel,reservationEmail,whatsappBotMenu,whatsappSubmenu,whatsappSubmenuAnswer} from './reservation-utils.js?v=4bdedf93';
 // Exclusivo do protótipo estático: simulação local, sem autenticação ou agenda reais.
-import { seedRooms, seedProperty } from './demo-seed.js?v=935aa02d';
+import { seedRooms, seedProperty } from './demo-seed.js?v=4bdedf93';
 const storageKey = 'pousada-prototipo-v1:' + location.pathname;
 const originalFetch = window.fetch.bind(window);
 const day = 86400000;
@@ -93,7 +93,7 @@ async function receiptAction(input,editing){
  if(editing)requireAdmin();const booking=bookingFor(input.code);
  const paymentLabels={'':'Não registrado',pix:'Pix',credit:'Cartão de crédito',debit:'Cartão de débito',cash:'Dinheiro',transfer:'Transferência bancária'};
  const saved=state.receipts[booking.code]||{paymentMethod:booking.paymentMethod||'',files:[]};let files=saved.files;const method=input.paymentMethod??saved.paymentMethod;
- const receipt=await import('./receipt.js?v=935aa02d');
+ const receipt=await import('./receipt.js?v=4bdedf93');
  if(editing&&(input.save||input.preview)){
   if(!Object.hasOwn(paymentLabels,method)||!Array.isArray(input.documents)||input.documents.length>3)fail('Revise pagamento e anexos.');
   files=[];
@@ -123,17 +123,31 @@ async function handle(path,input){
   const baseUrl=new URL('./',location.href).href;
   const menu=()=>whatsappBotMenu(state.property.name);
   if(['0','menu','inicio','início','voltar','reiniciar'].includes(lower)){state.whatsappSessions[sender]={step:'menu',context:{}};return {reply:menu(),step:'menu',sender};}
-  if(lower==='10'||/\b(humano|atendente|falar com a pousada|equipe|ajuda)\b/i.test(lower)){state.whatsappSessions[sender]={step:'human',context:{}};return {reply:'Encaminhamos seu atendimento para a equipe da pousada. Um responsável continuará por aqui em instantes. Para voltar ao menu automático (1 a 10), digite 0.',step:'human',sender};}
-  if(session.step==='human'&&/^([1-9]|10)$/.test(lower))session.step='menu';
+  const isTopStep=session.step==='menu'||session.step==='human';
+  if((isTopStep&&lower==='4')||/\b(humano|atendente|falar com a pousada|equipe|ajuda)\b/i.test(lower)){state.whatsappSessions[sender]={step:'human',context:{}};return {reply:'Encaminhamos seu atendimento para a equipe da pousada. Um responsável continuará por aqui em instantes. Para voltar ao menu principal (1 a 4), digite 0.',step:'human',sender};}
+  if(session.step==='human'&&/^[1-3]$/.test(lower))session.step='menu';
   if(session.step==='menu'){
    if(lower==='1'||lower.startsWith('reservar')){state.whatsappSessions[sender]={step:'dates',context:{}};return {reply:'Informe a data de entrada e a data de saída (ex.: 2026-11-18 2026-11-20 ou 18/11/2026 a 20/11/2026):',step:'dates',sender};}
-   if(lower==='2'||lower.startsWith('consultar')){state.whatsappSessions[sender]={step:'lookup',context:{}};return {reply:'Informe o código da sua reserva (18 caracteres):',step:'lookup',sender};}
-   const num=Number.parseInt(lower,10);
-   if(num>=3&&num<=9){
-    const ans=whatsappFaqAnswer(num,{propertyName:state.property.name,checkInTime:state.property.checkInTime,checkOutTime:state.property.checkOutTime,baseUrl});
-    if(ans)return {reply:ans,step:'menu',sender};
-   }
+   if(lower==='2'||lower.startsWith('minha reserva')||lower.startsWith('consultar')){state.whatsappSessions[sender]={step:'reservation_menu',context:{}};return {reply:whatsappSubmenu('reservation_menu'),step:'reservation_menu',sender};}
+   if(lower==='3'||lower.startsWith('informa')){state.whatsappSessions[sender]={step:'info_menu',context:{}};return {reply:whatsappSubmenu('info_menu'),step:'info_menu',sender};}
    return {reply:menu(),step:'menu',sender};
+  }
+  if(session.step==='reservation_menu'){
+   if(lower==='1'||lower.startsWith('consultar')){state.whatsappSessions[sender]={step:'lookup',context:{}};return {reply:'Informe o código da sua reserva (18 caracteres):',step:'lookup',sender};}
+   const num=Number.parseInt(lower,10);
+   if(num>=2&&num<=4){
+    const ans=whatsappSubmenuAnswer('reservation_menu',num,{propertyName:state.property.name,checkInTime:state.property.checkInTime,checkOutTime:state.property.checkOutTime,baseUrl});
+    if(ans)return {reply:ans,step:'reservation_menu',sender};
+   }
+   return {reply:whatsappSubmenu('reservation_menu'),step:'reservation_menu',sender};
+  }
+  if(session.step==='info_menu'){
+   const num=Number.parseInt(lower,10);
+   if(num>=1&&num<=4){
+    const ans=whatsappSubmenuAnswer('info_menu',num,{propertyName:state.property.name,checkInTime:state.property.checkInTime,checkOutTime:state.property.checkOutTime,baseUrl});
+    if(ans)return {reply:ans,step:'info_menu',sender};
+   }
+   return {reply:whatsappSubmenu('info_menu'),step:'info_menu',sender};
   }
   if(session.step==='lookup'){
    const code=text.toUpperCase().replace(/[^A-F0-9]/g,'');
