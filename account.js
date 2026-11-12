@@ -1,4 +1,4 @@
-import './demo.js?v=829487a0';
+import './demo.js?v=d5e45c13';
 const content = document.querySelector('#account-content');
 const money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const dates = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeZone: 'UTC' });
@@ -15,12 +15,7 @@ let reservationTotal = 0;
 if (content) content.innerHTML = `
   <p id="account-status" class="status" role="status"></p>
   <div id="account-guest" class="account-access">
-    <aside class="access-story" aria-label="Sobre a pousada" hidden>
-      <p class="eyebrow" data-property-name>Pousada Santa Terezinha do Menino Jesus</p>
-      <p class="access-headline">Sua estadia em frente à <em>Canção Nova</em></p>
-      <p class="access-description">Hospedagem familiar, a poucos passos do portão principal.</p>
-      <div class="access-values"><span>Quartos privativos</span><span>Vagas compartilhadas</span><span>Minha conta</span></div>
-    </aside>
+    <aside class="access-story" hidden></aside>
     <section class="access-form-side" aria-labelledby="account-form-title">
      <div class="access-form-wrap">
       <div class="access-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></div>
